@@ -4,540 +4,91 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 60px 0;
+  padding: 24px 0;
 }
 
-.main {
+.video_grid {
   width: 100%;
-  max-width: 1400px;
-  display: flex;
-  flex-direction: row;
-  gap: 80px;
-  align-items: center;
+  max-width: 1600px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  height: calc(100vh - 120px);
 }
 
-// 왼쪽: 히어로 섹션
-.hero_section {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-}
-
-.hero_content {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-.hero_title {
-  font-size: 56px;
-  font-weight: 800;
-  line-height: 1.2;
-  color: #ffffff;
-  margin: 0;
-  letter-spacing: -0.02em;
-
-  // 그라데이션 텍스트가 들어갈 부분
-  :global(.animated-gradient-text) {
-    font-size: 56px;
-    font-weight: 800;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 200% 200%;
-    animation: gradient 3s ease infinite;
-  }
-}
-
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.hero_description {
-  font-size: 20px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-}
-
-.hero_button {
-  margin-top: 8px;
-  width: 100%;
-  max-width: 400px;
-}
-
-.hero_stats {
-  display: flex;
-  gap: 48px;
-  margin-top: 16px;
-}
-
-.stat_item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat_number {
-  font-size: 32px;
-  font-weight: 700;
-  color: #00f69d;
-  line-height: 1;
-}
-
-.stat_label {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-// 오른쪽: 비디오 프리뷰 섹션
-.preview_section {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-}
-
-.video_preview {
-  width: 100%;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.video_container {
+.local_section,
+.remote_section {
   position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 246, 157, 0.3);
-}
-
-.video_placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 246, 157, 0.2) 0%,
-    rgba(64, 121, 255, 0.2) 100%
-  );
-  background-image: radial-gradient(
-      circle at 20% 50%,
-      rgba(0, 246, 157, 0.3) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 80%,
-      rgba(64, 121, 255, 0.3) 0%,
-      transparent 50%
-    );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video_wrapper {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-.video_overlay {
+.video_label {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(2px);
-}
-
-.play_button {
-  cursor: pointer;
-  transition: transform 0.2s;
-
-  &:hover {
-    transform: scale(1.1);
-  }
-
-  svg circle {
-    transition: fill 0.2s;
-  }
-
-  &:hover svg circle {
-    fill: rgba(255, 255, 255, 1);
-  }
-}
-
-.live_badge {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  top: 16px;
+  left: 16px;
   padding: 8px 16px;
-  background: rgba(255, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
   border-radius: 20px;
-  color: white;
+  color: #ffffff;
   font-size: 14px;
   font-weight: 600;
-  backdrop-filter: blur(10px);
-}
-
-.live_dot {
-  width: 8px;
-  height: 8px;
-  background: white;
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-// 추가 콘텐츠 섹션
-.content_section {
-  width: calc(100% + 32px);
-  padding: 80px 24px;
-  display: flex;
-  justify-content: center;
-  background-color: #111111;
-  margin-left: -16px;
-  margin-right: -16px;
-}
-
-.content_wrapper {
-  width: 100%;
-  max-width: 1200px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-.content_title {
-  font-size: 48px;
-  font-weight: 800;
-  color: #ffffff;
-  margin: 0;
-  line-height: 1.2;
-  text-align: center;
-}
-
-.content_subtitle {
-  font-size: 32px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0;
-  text-align: center;
-  line-height: 1.3;
-}
-
-.content_description {
-  font-size: 18px;
-  line-height: 1.8;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-  text-align: center;
-  max-width: 800px;
-  align-self: center;
-}
-
-.feature_card {
-  background: rgba(255, 255, 255, 0.05);
+  z-index: 10;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 32px;
-  margin-top: 24px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-}
-
-.feature_header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.feature_icon {
-  width: 24px;
-  height: 24px;
-  color: #00f69d;
-  flex-shrink: 0;
-}
-
-.feature_title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0;
-}
-
-.feature_description {
-  font-size: 16px;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0;
-}
-
-// FAQ 섹션
-.faq_section {
-  width: calc(100% + 32px);
-  padding: 80px 24px;
-  display: flex;
-  justify-content: center;
-  background-color: #111111;
-  margin-left: -16px;
-  margin-right: -16px;
-}
-
-.faq_wrapper {
-  width: 100%;
-  max-width: 800px;
-  display: flex;
-  flex-direction: column;
-  gap: 48px;
-}
-
-.faq_title {
-  font-size: 48px;
-  font-weight: 800;
-  color: #ffffff;
-  margin: 0;
-  text-align: center;
-  line-height: 1.2;
-}
-
-.faq_list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.faq_item {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-}
-
-.faq_question {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 24px;
-  background: transparent;
-  border: none;
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 600;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  span {
-    flex: 1;
-  }
-}
-
-.faq_icon {
-  width: 20px;
-  height: 20px;
-  color: rgba(255, 255, 255, 0.7);
-  transition: transform 0.3s ease;
-  flex-shrink: 0;
-  margin-left: 16px;
-}
-
-.faq_icon_open {
-  transform: rotate(180deg);
-}
-
-.faq_answer {
-  padding: 0 24px 20px 24px;
-  font-size: 16px;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.8);
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  pointer-events: none;
 }
 
 // 반응형 디자인
 @media (max-width: 1024px) {
-  .main {
-    flex-direction: column;
-    gap: 60px;
+  .video_grid {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: calc(100vh - 120px);
   }
 
-  .hero_section {
-    text-align: center;
-    align-items: center;
-    width: 100%;
-  }
-
-  .hero_content {
-    align-items: center;
-  }
-
-  .hero_title {
-    font-size: 42px;
-
-    :global(.animated-gradient-text) {
-      font-size: 42px;
-    }
-  }
-
-  .hero_description {
-    font-size: 18px;
-  }
-
-  .hero_button {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .hero_stats {
-    justify-content: center;
-    gap: 32px;
-  }
-
-  .video_preview {
-    max-width: 100%;
+  .local_section,
+  .remote_section {
+    min-height: 400px;
   }
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 40px 0;
+    padding: 16px 0;
   }
 
-  .main {
-    gap: 40px;
+  .video_grid {
+    gap: 12px;
+    height: auto;
   }
 
-  .hero_title {
-    font-size: 32px;
-
-    :global(.animated-gradient-text) {
-      font-size: 32px;
-    }
+  .local_section,
+  .remote_section {
+    min-height: 300px;
   }
 
-  .hero_description {
-    font-size: 16px;
+  .video_wrapper {
+    border-radius: 12px;
   }
 
-  .hero_button {
-    width: 100%;
-  }
-
-  .hero_stats {
-    flex-direction: column;
-    gap: 24px;
-    align-items: center;
-  }
-
-  .stat_number {
-    font-size: 24px;
-  }
-
-  .video_container {
-    border-radius: 16px;
-  }
-
-  .content_section {
-    padding: 60px 16px;
-    width: calc(100% + 32px);
-    margin-left: -16px;
-    margin-right: -16px;
-  }
-
-  .content_title {
-    font-size: 32px;
-  }
-
-  .content_subtitle {
-    font-size: 24px;
-  }
-
-  .content_description {
-    font-size: 16px;
-  }
-
-  .feature_card {
-    padding: 24px;
-  }
-
-  .feature_title {
-    font-size: 20px;
-  }
-
-  .feature_description {
-    font-size: 14px;
-  }
-
-  .faq_section {
-    padding: 60px 16px;
-    width: calc(100% + 32px);
-    margin-left: -16px;
-    margin-right: -16px;
-  }
-
-  .faq_title {
-    font-size: 32px;
-  }
-
-  .faq_question {
-    font-size: 16px;
-    padding: 16px 20px;
-  }
-
-  .faq_answer {
-    font-size: 14px;
-    padding: 0 20px 16px 20px;
+  .video_label {
+    top: 12px;
+    left: 12px;
+    padding: 6px 12px;
+    font-size: 12px;
   }
 }
