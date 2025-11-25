@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import Header from "@/components/layout/header";
 import MainLayout from "@/components/layout/main";
 import Video from "@/components/page/home/video";
-import Button from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMatching } from "@/hooks/useMatching";
 import { useWebRTC } from "@/hooks/useWebRTC";
+import { Video as VideoIcon } from "lucide-react";
 import styles from "./styles.module.scss";
 
 export default function Home() {
@@ -14,7 +14,6 @@ export default function Home() {
     status: matchingStatus, 
     sessionId, 
     matchedUser, 
-    similarityScore,
     error: matchingError,
     join, 
     leave, 
@@ -25,12 +24,9 @@ export default function Home() {
   const {
     localStream,
     remoteStream,
-    isConnected,
     isConnecting,
     toggleVideo,
-    toggleAudio,
     isVideoEnabled,
-    isAudioEnabled,
     endCall,
   } = useWebRTC(sessionId);
 
@@ -80,39 +76,40 @@ export default function Home() {
             </div>
           )}
 
-          <div className={styles.matching_controls}>
+          <div className={styles.bottom_controls}>
             {!isAuthenticated ? (
               <div className={styles.login_prompt}>
                 로그인 후 매칭을 시작할 수 있습니다.
               </div>
             ) : matchingStatus === 'idle' ? (
-              <Button variant="primary" size="large" onClick={handleStartMatching}>
-                매칭 시작
-              </Button>
+              <button className={styles.start_button} onClick={handleStartMatching}>
+                <VideoIcon size={20} />
+                <div className={styles.avatar_stack}>
+                  <img src="https://i.pravatar.cc/40?img=1" alt="" />
+                  <img src="https://i.pravatar.cc/40?img=2" alt="" />
+                  <img src="https://i.pravatar.cc/40?img=3" alt="" />
+                  <img src="https://i.pravatar.cc/40?img=4" alt="" />
+                  <img src="https://i.pravatar.cc/40?img=5" alt="" />
+                </div>
+                <span>비디오챗 시작하기</span>
+              </button>
             ) : matchingStatus === 'waiting' ? (
-              <div className={styles.waiting_status}>
-                <div className={styles.waiting_text}>매칭 대기 중...</div>
-                <Button variant="secondary" size="medium" onClick={handleStopMatching}>
-                  매칭 취소
-                </Button>
-              </div>
+              <button className={styles.waiting_button} onClick={handleStopMatching}>
+                <div className={styles.waiting_spinner}></div>
+                <span>매칭 중... 취소하려면 탭하세요</span>
+              </button>
             ) : matchingStatus === 'matched' ? (
-              <div className={styles.matched_status}>
+              <div className={styles.matched_controls}>
                 <div className={styles.matched_info}>
                   {matchedUser && (
-                    <>
-                      <span className={styles.matched_name}>
-                        {matchedUser.nickname || matchedUser.name || '상대방'}
-                      </span>
-                      <span className={styles.similarity}>
-                        유사도: {Math.round((similarityScore || 0) * 100)}%
-                      </span>
-                    </>
+                    <span className={styles.matched_name}>
+                      {matchedUser.nickname || matchedUser.name || '상대방'}과 연결됨
+                    </span>
                   )}
                 </div>
-                <Button variant="secondary" size="medium" onClick={handleEndCall}>
+                <button className={styles.end_button} onClick={handleEndCall}>
                   통화 종료
-                </Button>
+                </button>
               </div>
             ) : null}
           </div>

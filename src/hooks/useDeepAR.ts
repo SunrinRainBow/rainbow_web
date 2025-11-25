@@ -104,8 +104,9 @@ export function useDeepAR(): UseDeepARReturn {
     try {
       await deepARRef.current.switchEffect(effectPath);
 
-      const effectId = effectPath.split('/').pop() || effectPath;
-      setCurrentEffect(effectId);
+      const allEffects = [...DEEPAR_EFFECTS.style, ...DEEPAR_EFFECTS.beauty];
+      const matchedEffect = allEffects.find(e => e.path === effectPath);
+      setCurrentEffect(matchedEffect?.id || effectPath);
     } catch (err) {
       console.error('효과 로드 실패:', err);
       setError('효과를 로드하는데 실패했습니다.');
