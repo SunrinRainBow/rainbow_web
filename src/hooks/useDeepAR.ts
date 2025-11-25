@@ -1,33 +1,35 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import * as deepar from 'deepar';
 
-// DeepAR CDN 기본 URL (공식 문서 참조: https://docs.deepar.ai/deepar-sdk/platforms/web/getting-started)
+const EFFECTS_BASE_PATH = '/effects/';
 const DEEPAR_EFFECTS_CDN = 'https://cdn.jsdelivr.net/npm/deepar/effects/';
 
 export const DEEPAR_EFFECTS = {
-
   style: [
     { id: 'aviators', name: 'Aviators', path: `${DEEPAR_EFFECTS_CDN}aviators`, preview: '🕶️' },
-    { id: 'beard', name: 'Beard', path: `${DEEPAR_EFFECTS_CDN}beard`, preview: '🧔' },
-    { id: 'dalmatian', name: 'Dalmatian', path: `${DEEPAR_EFFECTS_CDN}dalmatian`, preview: '🐕' },
-    { id: 'flowers', name: 'Flowers', path: `${DEEPAR_EFFECTS_CDN}flowers`, preview: '🌸' },
     { id: 'koala', name: 'Koala', path: `${DEEPAR_EFFECTS_CDN}koala`, preview: '🐨' },
     { id: 'lion', name: 'Lion', path: `${DEEPAR_EFFECTS_CDN}lion`, preview: '🦁' },
-    { id: 'teddycigar', name: 'Teddy Cigar', path: `${DEEPAR_EFFECTS_CDN}teddycigar`, preview: '🧸' },
-    { id: 'background_segmentation', name: 'Background Blur', path: `${DEEPAR_EFFECTS_CDN}background_segmentation`, preview: '🌫️' },
-    { id: 'tripleface', name: 'Triple Face', path: `${DEEPAR_EFFECTS_CDN}tripleface`, preview: '👥' },
-    { id: 'sleepingmask', name: 'Sleeping Mask', path: `${DEEPAR_EFFECTS_CDN}sleepingmask`, preview: '😴' },
-    { id: 'fatify', name: 'Fatify', path: `${DEEPAR_EFFECTS_CDN}fatify`, preview: '🫃' },
-    { id: 'smallface', name: 'Small Face', path: `${DEEPAR_EFFECTS_CDN}smallface`, preview: '🤏' },
-    { id: 'Split_View_Look', name: 'Split View', path: `${DEEPAR_EFFECTS_CDN}Split_View_Look`, preview: '↔️' },
-    { id: 'Emotion_Meter', name: 'Emotion Meter', path: `${DEEPAR_EFFECTS_CDN}Emotion_Meter`, preview: '😊' },
-    { id: 'Ping_Pong', name: 'Ping Pong', path: `${DEEPAR_EFFECTS_CDN}Ping_Pong`, preview: '🏓' },
+    { id: 'dalmatian', name: 'Dalmatian', path: `${DEEPAR_EFFECTS_CDN}dalmatian`, preview: '🐕' },
+    { id: 'viking_helmet', name: 'Viking Helmet', path: `${EFFECTS_BASE_PATH}viking_helmet.deepar`, preview: '⚔️' },
+    { id: 'vendetta_mask', name: 'Vendetta Mask', path: `${EFFECTS_BASE_PATH}Vendetta_Mask.deepar`, preview: '🎭' },
+    { id: 'flower_face', name: 'Flower Face', path: `${EFFECTS_BASE_PATH}flower_face.deepar`, preview: '🌸' },
+    { id: 'humanoid', name: 'Humanoid', path: `${EFFECTS_BASE_PATH}Humanoid.deepar`, preview: '🤖' },
+    { id: 'snail', name: 'Snail', path: `${EFFECTS_BASE_PATH}Snail.deepar`, preview: '🐌' },
+    { id: 'neon_devil_horns', name: 'Devil Horns', path: `${EFFECTS_BASE_PATH}Neon_Devil_Horns.deepar`, preview: '😈' },
+    { id: 'fire_effect', name: 'Fire Effect', path: `${EFFECTS_BASE_PATH}Fire_Effect.deepar`, preview: '🔥' },
+    { id: 'hope', name: 'Hope', path: `${EFFECTS_BASE_PATH}Hope.deepar`, preview: '✨' },
+    { id: 'burning_effect', name: 'Burning Man', path: `${EFFECTS_BASE_PATH}burning_effect.deepar`, preview: '🔥' },
+    { id: 'galaxy_background', name: 'Galaxy Background', path: `${EFFECTS_BASE_PATH}galaxy_background.deepar`, preview: '🌌' },
+    { id: 'elephant_trunk', name: 'Elephant Trunk', path: `${EFFECTS_BASE_PATH}Elephant_Trunk.deepar`, preview: '🐘' },
+    { id: 'emotion_meter', name: 'Emotion Meter', path: `${EFFECTS_BASE_PATH}Emotion_Meter.deepar`, preview: '😊' },
+    { id: 'emotions_exaggerator', name: 'Emotions Exaggerator', path: `${EFFECTS_BASE_PATH}Emotions_Exaggerator.deepar`, preview: '😄' },
+    { id: 'ping_pong', name: 'Ping Pong', path: `${EFFECTS_BASE_PATH}Ping_Pong.deepar`, preview: '🏓' },
+    { id: 'pixel_hearts', name: 'Pixel Hearts', path: `${EFFECTS_BASE_PATH}8bitHearts.deepar`, preview: '💕' },
+    { id: 'stallone', name: 'Stallone', path: `${EFFECTS_BASE_PATH}Stallone.deepar`, preview: '💪' },
+    { id: 'split_view', name: 'Split View', path: `${EFFECTS_BASE_PATH}Split_View_Look.deepar`, preview: '↔️' },
   ],
-
   beauty: [
-    { id: 'beauty_0', name: 'Natural', path: `${DEEPAR_EFFECTS_CDN}beauty`, preview: '✨' },
-    { id: 'makeup1', name: 'Makeup 1', path: `${DEEPAR_EFFECTS_CDN}Makeup_Look`, preview: '💄' },
-    { id: 'blush', name: 'Blush', path: `${DEEPAR_EFFECTS_CDN}blush`, preview: '🌸' },
+    { id: 'makeup_look', name: 'Makeup Look', path: `${EFFECTS_BASE_PATH}MakeupLook.deepar`, preview: '💄' },
   ],
 };
 
