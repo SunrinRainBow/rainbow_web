@@ -1,18 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/layout/header";
 import MainLayout from "@/components/layout/main";
 import Input from "@/components/ui/input";
 import Category from "@/components/ui/category";
 import { categories } from "@/components/ui/category/data";
 import Button from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 import styles from "./styles.module.scss";
 
 export default function Profile() {
+  const navigate = useNavigate();
+  const { isAuthenticated, user, isLoading } = useAuth();
   const [nickname, setNickname] = useState("");
   const [age, setAge] = useState("");
   const [country, setCountry] = useState("");
   const [gender, setGender] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  // 로그인하지 않은 경우 홈으로 리다이렉트
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, isLoading, navigate]);
+
+  // 사용자 정보가 있으면 닉네임 초기값 설정
+  useEffect(() => {
+    if (user?.name) {
+      setNickname(user.name);
+    }
+  }, [user]);
 
   const handleCategoryToggle = (categoryId: string) => {
     setSelectedCategories((prev) =>
@@ -45,34 +63,91 @@ export default function Profile() {
               <br />더 정확한 매칭을 도와드릴 수 있습니다.
             </p>
 
+            {/* Google 로그인 정보 표시 */}
+            {user && (
+              <div className={styles.user_info_section}>
+                <h2 className={styles.section_title}>Google 계정 정보</h2>
+                <div className={styles.user_info_card}>
+                  <div className={styles.user_avatar_large}>
+                    {user.avatar ? (
+                      <img src={user.avatar} alt={user.name || "User"} />
+                    ) : (
+                      <div className={styles.avatar_placeholder_large}>
+                        <svg
+                          width="64"
+                          height="64"
+                          viewBox="0 0 64 64"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle
+                            cx="32"
+                            cy="32"
+                            r="32"
+                            fill="rgba(255,255,255,0.1)"
+                          />
+                          <path
+                            d="M32 20C27.5817 20 24 23.5817 24 28C24 32.4183 27.5817 36 32 36C36.4183 36 40 32.4183 40 28C40 23.5817 36.4183 20 32 20Z"
+                            fill="rgba(255,255,255,0.5)"
+                          />
+                          <path
+                            d="M32 38C25.3726 38 20 41.3726 20 48H44C44 41.3726 38.6274 38 32 38Z"
+                            fill="rgba(255,255,255,0.5)"
+                          />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles.user_details}>
+                    <div className={styles.user_detail_item}>
+                      <span className={styles.user_detail_label}>이름</span>
+                      <span className={styles.user_detail_value}>
+                        {user.name || "이름 없음"}
+                      </span>
+                    </div>
+                    <div className={styles.user_detail_item}>
+                      <span className={styles.user_detail_label}>이메일</span>
+                      <span className={styles.user_detail_value}>
+                        {user.email}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className={styles.form}>
               {/* 프로필 이미지 섹션 */}
               <div className={styles.section}>
                 <h2 className={styles.section_title}>프로필 사진</h2>
                 <div className={styles.avatar_section}>
                   <div className={styles.avatar_placeholder}>
-                    <svg
-                      width="64"
-                      height="64"
-                      viewBox="0 0 64 64"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <circle
-                        cx="32"
-                        cy="32"
-                        r="32"
-                        fill="rgba(255,255,255,0.1)"
-                      />
-                      <path
-                        d="M32 20C27.5817 20 24 23.5817 24 28C24 32.4183 27.5817 36 32 36C36.4183 36 40 32.4183 40 28C40 23.5817 36.4183 20 32 20Z"
-                        fill="rgba(255,255,255,0.5)"
-                      />
-                      <path
-                        d="M32 38C25.3726 38 20 41.3726 20 48H44C44 41.3726 38.6274 38 32 38Z"
-                        fill="rgba(255,255,255,0.5)"
-                      />
-                    </svg>
+                    {user?.avatar ? (
+                      <img src={user.avatar} alt={user.name || "User"} />
+                    ) : (
+                      <svg
+                        width="64"
+                        height="64"
+                        viewBox="0 0 64 64"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle
+                          cx="32"
+                          cy="32"
+                          r="32"
+                          fill="rgba(255,255,255,0.1)"
+                        />
+                        <path
+                          d="M32 20C27.5817 20 24 23.5817 24 28C24 32.4183 27.5817 36 32 36C36.4183 36 40 32.4183 40 28C40 23.5817 36.4183 20 32 20Z"
+                          fill="rgba(255,255,255,0.5)"
+                        />
+                        <path
+                          d="M32 38C25.3726 38 20 41.3726 20 48H44C44 41.3726 38.6274 38 32 38Z"
+                          fill="rgba(255,255,255,0.5)"
+                        />
+                      </svg>
+                    )}
                   </div>
                   <Button variant="secondary" size="medium">
                     사진 변경

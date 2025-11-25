@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { Home, Type, Profile, About } from "@/pages";
+import { Home, Type, Profile, About, AuthCallback } from "@/pages";
 
 const Router = createBrowserRouter([
   {
@@ -18,6 +18,10 @@ const Router = createBrowserRouter([
   {
     path: "/about",
     element: <About />,
+  },
+  {
+    path: "/auth/callback",
+    element: <AuthCallback />,
   },
 ]);
 

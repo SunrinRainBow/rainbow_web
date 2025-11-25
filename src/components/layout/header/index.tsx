@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Button from "@/components/ui/button";
 import Auth from "@/components/ui/widget/auth";
+import { useAuth } from "@/contexts/AuthContext";
 import s from "./styles.module.scss";
-import { Clock, User } from "lucide-react";
+import { Clock, User, LogOut } from "lucide-react";
 
 export default function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated, user, login, logout } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
 
   const isActive = (path: string) => {
@@ -14,7 +17,18 @@ export default function Header() {
   };
 
   const handleLoginClick = () => {
-    setShowAuth(true);
+    if (isAuthenticated) {
+      // 로그인 상태면 프로필로 이동
+      navigate("/profile");
+    } else {
+      // 로그인 안 된 상태면 로그인 모달 표시
+      setShowAuth(true);
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
   };
 
   const handleCloseAuth = () => {
@@ -63,16 +77,39 @@ export default function Header() {
               지난 대화 상대
             </Button>
           </div>
-          <div className={s.login}>
-            <Button
-              leadingIcon={<User />}
-              size="medium"
-              variant="secondary"
-              onClick={handleLoginClick}
-            >
-              로그인
-            </Button>
-          </div>
+          {isAuthenticated && user ? (
+            <div className={s.user_info}>
+              <div className={s.user_avatar} onClick={handleLoginClick}>
+                {user.avatar ? (
+                  <img src={user.avatar} alt={user.name || "User"} />
+                ) : (
+                  <div className={s.avatar_placeholder}>
+                    <User size={20} />
+                  </div>
+                )}
+              </div>
+              <span className={s.user_name}>{user.name || user.email}</span>
+              <Button
+                leadingIcon={<LogOut />}
+                size="medium"
+                variant="secondary"
+                onClick={handleLogout}
+              >
+                로그아웃
+              </Button>
+            </div>
+          ) : (
+            <div className={s.login}>
+              <Button
+                leadingIcon={<User />}
+                size="medium"
+                variant="secondary"
+                onClick={handleLoginClick}
+              >
+                로그인
+              </Button>
+            </div>
+          )}
         </div>
       </div>
       {showAuth && <Auth onClose={handleCloseAuth} />}
