@@ -6,17 +6,28 @@ interface CameraProps {
   showControls?: boolean;
   onVideoToggle?: () => void;
   isVideoOn?: boolean;
+  localStream?: MediaStream | null;
 }
 
 export default function Camera({
   showControls = false,
   onVideoToggle,
   isVideoOn = true,
+  localStream,
 }: CameraProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
 
   useEffect(() => {
+    // 외부에서 전달받은 localStream이 있으면 사용
+    if (localStream) {
+      setStream(localStream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = localStream;
+      }
+      return;
+    }
+
     // 카메라 스트림 가져오기
     const getCameraStream = async () => {
       try {
@@ -37,7 +48,7 @@ export default function Camera({
       getCameraStream();
     } else {
       // 비디오가 꺼져있을 때 스트림 정리
-      if (stream) {
+      if (stream && !localStream) {
         stream.getVideoTracks().forEach((track) => track.stop());
         setStream(null);
       }
@@ -46,13 +57,13 @@ export default function Camera({
       }
     }
 
-    // cleanup
+    // cleanup (외부 스트림이 아닌 경우에만 정리)
     return () => {
-      if (stream) {
+      if (stream && !localStream) {
         stream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [isVideoOn]);
+  }, [isVideoOn, localStream]);
 
   const handleVideoToggle = () => {
     onVideoToggle?.();

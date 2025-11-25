@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import Header from "@/components/layout/header";
 import MainLayout from "@/components/layout/main";
 import Input from "@/components/ui/input";
@@ -7,30 +6,46 @@ import Category from "@/components/ui/category";
 import { categories } from "@/components/ui/category/data";
 import Button from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { getMyProfile, updateMyProfile } from "@/api/profile";
 import styles from "./styles.module.scss";
 
 export default function Profile() {
-  const navigate = useNavigate();
-  const { isAuthenticated, user, isLoading } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [nickname, setNickname] = useState("");
   const [age, setAge] = useState("");
   const [country, setCountry] = useState("");
   const [gender, setGender] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // 로그인하지 않은 경우 홈으로 리다이렉트
+  // 프로필 정보 불러오기
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      navigate("/");
-    }
-  }, [isAuthenticated, isLoading, navigate]);
+    const fetchProfile = async () => {
+      if (!isAuthenticated) return;
+      
+      setIsLoading(true);
+      try {
+        const profile = await getMyProfile();
+        setNickname(profile.nickname || profile.name || "");
+        setAge(profile.age?.toString() || "");
+        setCountry(profile.country || "");
+        setGender(profile.gender || "");
+        setSelectedCategories(profile.categories || []);
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+        // 기본값으로 사용자 이름 사용
+        if (user?.name) {
+          setNickname(user.name);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  // 사용자 정보가 있으면 닉네임 초기값 설정
-  useEffect(() => {
-    if (user?.name) {
-      setNickname(user.name);
-    }
-  }, [user]);
+    fetchProfile();
+  }, [isAuthenticated, user]);
 
   const handleCategoryToggle = (categoryId: string) => {
     setSelectedCategories((prev) =>
@@ -40,15 +55,25 @@ export default function Profile() {
     );
   };
 
-  const handleSave = () => {
-    // TODO: 저장 로직 구현
-    console.log("Profile data:", {
-      nickname,
-      age,
-      country,
-      gender,
-      selectedCategories,
-    });
+  const handleSave = async () => {
+    setIsSaving(true);
+    setMessage(null);
+    
+    try {
+      await updateMyProfile({
+        nickname,
+        age: age ? parseInt(age, 10) : undefined,
+        country: country || undefined,
+        gender: gender || undefined,
+        categories: selectedCategories,
+      });
+      setMessage({ type: 'success', text: '프로필이 저장되었습니다.' });
+    } catch (error) {
+      console.error("Failed to save profile:", error);
+      setMessage({ type: 'error', text: '프로필 저장에 실패했습니다.' });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -245,6 +270,13 @@ export default function Profile() {
                 />
               </div>
 
+              {/* 메시지 표시 */}
+              {message && (
+                <div className={`${styles.message} ${styles[message.type]}`}>
+                  {message.text}
+                </div>
+              )}
+
               {/* 저장 버튼 */}
               <div className={styles.action_buttons}>
                 <Button
@@ -252,8 +284,9 @@ export default function Profile() {
                   size="large"
                   onClick={handleSave}
                   fullWidth
+                  disabled={isSaving || isLoading}
                 >
-                  프로필 저장
+                  {isSaving ? '저장 중...' : '프로필 저장'}
                 </Button>
               </div>
             </div>

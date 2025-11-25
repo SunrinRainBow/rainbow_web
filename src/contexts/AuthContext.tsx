@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       
       // 프로필 페이지로 리다이렉트
       setTimeout(() => {
-        window.location.href = '/profile';
+        window.location.href = '/';
       }, 500);
       
       setIsLoading(false);

@@ -9,6 +9,7 @@ export type VideoMode = "loading" | "only-voice" | "camera" | "default";
 interface VideoProps {
   mode?: VideoMode;
   remoteStream?: MediaStream | null;
+  localStream?: MediaStream | null;
   showControls?: boolean;
   onVideoToggle?: () => void;
   isVideoOn?: boolean;
@@ -17,6 +18,7 @@ interface VideoProps {
 export default function Video({
   mode = "loading",
   remoteStream = null,
+  localStream = null,
   showControls = false,
   onVideoToggle,
   isVideoOn = true,
@@ -36,6 +38,7 @@ export default function Video({
           showControls={showControls}
           onVideoToggle={onVideoToggle}
           isVideoOn={isVideoOn}
+          localStream={localStream}
         />
       )}
       {mode === "default" && <Default remoteStream={remoteStream} />}

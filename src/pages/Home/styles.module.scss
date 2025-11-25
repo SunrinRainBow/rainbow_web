@@ -2,9 +2,119 @@
   width: 100%;
   min-height: calc(100vh - 72px);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 24px 0;
+  gap: 24px;
+}
+
+.matching_controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.login_prompt {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.waiting_status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.waiting_text {
+  color: #fbbf24;
+  font-size: 16px;
+  font-weight: 600;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.matched_status {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.matched_info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.matched_name {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.similarity {
+  color: #10b981;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.connection_status {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.error_message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 12px;
+  color: #ef4444;
+  font-size: 14px;
+  font-weight: 500;
+  
+  span {
+    flex: 1;
+  }
+}
+
+.error_close {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .video_grid {

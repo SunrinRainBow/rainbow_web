@@ -1,17 +1,47 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/layout/header";
 import MainLayout from "@/components/layout/main";
 import Input from "@/components/ui/input";
 import Category from "@/components/ui/category";
 import { categories } from "@/components/ui/category/data";
 import Button from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { getMyPreferences, updateMyPreferences } from "@/api/preferences";
 import styles from "./styles.module.scss";
 
 export default function Type() {
+  const { isAuthenticated } = useAuth();
   const [country, setCountry] = useState("");
-  const [age, setAge] = useState("");
+  const [ageMin, setAgeMin] = useState("");
+  const [ageMax, setAgeMax] = useState("");
   const [gender, setGender] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // 선호도 정보 불러오기
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      if (!isAuthenticated) return;
+      
+      setIsLoading(true);
+      try {
+        const prefs = await getMyPreferences();
+        setCountry(prefs.target_country || "");
+        setAgeMin(prefs.target_age_min?.toString() || "");
+        setAgeMax(prefs.target_age_max?.toString() || "");
+        setGender(prefs.target_gender || "");
+        setSelectedCategories(prefs.target_categories || []);
+      } catch (error) {
+        console.error("Failed to fetch preferences:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPreferences();
+  }, [isAuthenticated]);
 
   const handleCategoryToggle = (categoryId: string) => {
     setSelectedCategories((prev) =>
@@ -21,14 +51,25 @@ export default function Type() {
     );
   };
 
-  const handleSave = () => {
-    // TODO: 저장 로직 구현
-    console.log("Type data:", {
-      country,
-      age,
-      gender,
-      selectedCategories,
-    });
+  const handleSave = async () => {
+    setIsSaving(true);
+    setMessage(null);
+    
+    try {
+      await updateMyPreferences({
+        target_country: country || undefined,
+        target_age_min: ageMin ? parseInt(ageMin, 10) : undefined,
+        target_age_max: ageMax ? parseInt(ageMax, 10) : undefined,
+        target_gender: gender || undefined,
+        target_categories: selectedCategories,
+      });
+      setMessage({ type: 'success', text: '설정이 저장되었습니다.' });
+    } catch (error) {
+      console.error("Failed to save preferences:", error);
+      setMessage({ type: 'error', text: '설정 저장에 실패했습니다.' });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -50,10 +91,18 @@ export default function Type() {
                 <h2 className={styles.section_title}>기본 정보</h2>
                 <div className={styles.form_grid}>
                   <Input
-                    label="나이"
-                    placeholder="나이를 입력해주세요"
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
+                    label="최소 나이"
+                    placeholder="최소 나이"
+                    value={ageMin}
+                    onChange={(e) => setAgeMin(e.target.value)}
+                    fullWidth
+                    size="large"
+                  />
+                  <Input
+                    label="최대 나이"
+                    placeholder="최대 나이"
+                    value={ageMax}
+                    onChange={(e) => setAgeMax(e.target.value)}
                     fullWidth
                     size="large"
                   />
@@ -112,6 +161,13 @@ export default function Type() {
                 />
               </div>
 
+              {/* 메시지 표시 */}
+              {message && (
+                <div className={`${styles.message} ${styles[message.type]}`}>
+                  {message.text}
+                </div>
+              )}
+
               {/* 저장 버튼 */}
               <div className={styles.action_buttons}>
                 <Button
@@ -119,8 +175,9 @@ export default function Type() {
                   size="large"
                   onClick={handleSave}
                   fullWidth
+                  disabled={isSaving || isLoading}
                 >
-                  설정 저장
+                  {isSaving ? '저장 중...' : '설정 저장'}
                 </Button>
               </div>
             </div>
