@@ -105,7 +105,7 @@ export default function DeepARCamera({
         isOpen={isFilterModalOpen}
         onClose={() => setIsFilterModalOpen(false)}
         onFilterSelect={handleFilterSelect}
-
+        previewElement={previewRef.current}
         externalDeepAR={{
           isInitialized,
           currentEffect,

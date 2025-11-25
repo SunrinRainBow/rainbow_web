@@ -1,4 +1,5 @@
-import { X } from "lucide-react";
+import { useRef, useEffect } from "react";
+import { X, Camera } from "lucide-react";
 import { DEEPAR_EFFECTS } from "@/hooks/useDeepAR";
 import styles from "./styles.module.scss";
 
@@ -14,6 +15,7 @@ interface FilterModalProps {
   onClose: () => void;
   onFilterSelect?: (effectPath: string | null) => void;
   externalDeepAR?: ExternalDeepAR;
+  previewElement?: HTMLDivElement | null;
 }
 
 export default function FilterModal({ 
@@ -21,11 +23,29 @@ export default function FilterModal({
   onClose, 
   onFilterSelect,
   externalDeepAR,
+  previewElement,
 }: FilterModalProps) {
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+  const originalParentRef = useRef<HTMLElement | null>(null);
 
   const isInitialized = externalDeepAR?.isInitialized ?? false;
   const currentEffect = externalDeepAR?.currentEffect ?? null;
   const isLoading = false;
+
+  useEffect(() => {
+    if (isOpen && previewElement && previewContainerRef.current) {
+      originalParentRef.current = previewElement.parentElement;
+      previewContainerRef.current.appendChild(previewElement);
+      previewElement.style.borderRadius = '16px';
+    }
+
+    return () => {
+      if (previewElement && originalParentRef.current) {
+        originalParentRef.current.appendChild(previewElement);
+        previewElement.style.borderRadius = '';
+      }
+    };
+  }, [isOpen, previewElement]);
 
   const handleFilterSelect = async (effectPath: string) => {
     if (externalDeepAR) {
@@ -54,12 +74,13 @@ export default function FilterModal({
           </button>
         </div>
 
-        <div className={styles.status_bar}>
-          <div className={styles.status_indicator}>
-            {isInitialized ? (
-              <span className={styles.status_connected}>● 카메라 연결됨</span>
-            ) : (
-              <span className={styles.status_disconnected}>○ 카메라 대기중</span>
+        <div className={styles.preview}>
+          <div className={styles.preview_video} ref={previewContainerRef}>
+            {!previewElement && (
+              <div className={styles.preview_placeholder}>
+                <Camera size={48} color="rgba(255,255,255,0.3)" />
+                <span>카메라 미리보기</span>
+              </div>
             )}
           </div>
           {currentEffect && (
@@ -73,45 +94,41 @@ export default function FilterModal({
           )}
         </div>
 
-        <div className={styles.section}>
-          <h3 className={styles.section_title}>스타일</h3>
-          <div className={styles.filter_grid}>
-            {DEEPAR_EFFECTS.style.map((filter) => (
-              <button
-                key={filter.id}
-                className={`${styles.filter_item} ${currentEffect === filter.id ? styles.selected : ''}`}
-                onClick={() => handleFilterSelect(filter.path)}
-                disabled={isLoading || !isInitialized}
-                title={filter.name}
-              >
-                <div className={styles.filter_icon}>{filter.preview}</div>
-              </button>
-            ))}
+        <div className={styles.content}>
+          <div className={styles.section}>
+            <h3 className={styles.section_title}>스타일</h3>
+            <div className={styles.filter_grid}>
+              {DEEPAR_EFFECTS.style.map((filter) => (
+                <button
+                  key={filter.id}
+                  className={`${styles.filter_item} ${currentEffect === filter.id ? styles.selected : ''}`}
+                  onClick={() => handleFilterSelect(filter.path)}
+                  disabled={isLoading || !isInitialized}
+                  title={filter.name}
+                >
+                  <div className={styles.filter_icon}>{filter.preview}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.section}>
+            <h3 className={styles.section_title}>뷰티</h3>
+            <div className={styles.filter_grid}>
+              {DEEPAR_EFFECTS.beauty.map((filter) => (
+                <button
+                  key={filter.id}
+                  className={`${styles.filter_item} ${currentEffect === filter.id ? styles.selected : ''}`}
+                  onClick={() => handleFilterSelect(filter.path)}
+                  disabled={isLoading || !isInitialized}
+                  title={filter.name}
+                >
+                  <div className={styles.filter_icon}>{filter.preview}</div>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-
-        <div className={styles.section}>
-          <h3 className={styles.section_title}>뷰티</h3>
-          <div className={styles.filter_grid}>
-            {DEEPAR_EFFECTS.beauty.map((filter) => (
-              <button
-                key={filter.id}
-                className={`${styles.filter_item} ${currentEffect === filter.id ? styles.selected : ''}`}
-                onClick={() => handleFilterSelect(filter.path)}
-                disabled={isLoading || !isInitialized}
-                title={filter.name}
-              >
-                <div className={styles.filter_icon}>{filter.preview}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {!isInitialized && (
-          <div className={styles.info_banner}>
-            <p>홈 화면의 카메라에서 필터가 적용됩니다.</p>
-          </div>
-        )}
       </div>
     </div>
   );

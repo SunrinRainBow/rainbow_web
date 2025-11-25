@@ -28,7 +28,6 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .title {
@@ -66,6 +65,17 @@
   background: #0a0a0a;
   border-radius: 16px;
   overflow: hidden;
+
+  & > div {
+    width: 100% !important;
+    height: 100% !important;
+    
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+    }
+  }
 }
 
 .video,
@@ -132,18 +142,23 @@
 }
 
 .remove_effect_btn {
-  padding: 8px 16px;
-  background: rgba(239, 68, 68, 0.2);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  border-radius: 16px;
-  color: #ef4444;
-  font-size: 13px;
+  position: absolute;
+  bottom: 28px;
+  right: 36px;
+  padding: 10px 20px;
+  background: rgba(50, 50, 50, 0.9);
+  border: none;
+  border-radius: 20px;
+  color: #ffffff;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  backdrop-filter: blur(10px);
+  z-index: 10;
 
   &:hover {
-    background: rgba(239, 68, 68, 0.3);
+    background: rgba(70, 70, 70, 0.95);
   }
 
   &:disabled {
@@ -165,9 +180,14 @@
   }
 }
 
+.content {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
 .section {
   padding: 16px 24px;
-  overflow-y: auto;
 }
 
 .section_title {
