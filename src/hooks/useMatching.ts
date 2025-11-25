@@ -32,7 +32,6 @@ export function useMatching(): UseMatchingReturn {
     setError(null);
   }, []);
 
-  // WebSocket 연결
   const connect = useCallback(() => {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -41,13 +40,13 @@ export function useMatching(): UseMatchingReturn {
     
     ws.onopen = () => {
       setIsConnected(true);
-      // 현재 상태 요청
+
       ws.send(JSON.stringify({ action: 'status' }));
     };
     
     ws.onclose = () => {
       setIsConnected(false);
-      // 재연결 시도
+
       reconnectTimeoutRef.current = setTimeout(() => {
         connect();
       }, 3000);
@@ -59,8 +58,7 @@ export function useMatching(): UseMatchingReturn {
     
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      
-      // 에러 상태인 경우
+
       if (data.status === 'error') {
         setError(data.message);
         return;
@@ -83,7 +81,6 @@ export function useMatching(): UseMatchingReturn {
     wsRef.current = ws;
   }, []);
 
-  // 컴포넌트 마운트 시 연결
   useEffect(() => {
     connect();
     
@@ -97,18 +94,16 @@ export function useMatching(): UseMatchingReturn {
     };
   }, [connect]);
 
-  // 매칭 큐 참가
   const join = useCallback(async () => {
     setError(null);
     
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify({ action: 'join' }));
     } else {
-      // WebSocket이 연결되지 않은 경우 REST API 사용
+
       try {
         const result = await joinMatchingQueue();
-        
-        // 에러 상태인 경우 (프로필 미완성)
+
         if (result.status === 'error') {
           setError(result.message);
           return;
@@ -125,7 +120,6 @@ export function useMatching(): UseMatchingReturn {
     }
   }, []);
 
-  // 매칭 큐 탈퇴
   const leave = useCallback(async () => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify({ action: 'leave' }));
@@ -142,7 +136,6 @@ export function useMatching(): UseMatchingReturn {
     }
   }, []);
 
-  // 세션 종료
   const endSession = useCallback(async () => {
     if (sessionId) {
       try {

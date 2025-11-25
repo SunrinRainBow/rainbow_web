@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 const WS_BASE_URL = import.meta.env.VITE_WS_BASE_URL || 'ws://localhost:8088';
 
-// STUN/TURN 서버 설정
 const ICE_SERVERS = [
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
@@ -33,7 +32,6 @@ export function useWebRTC(sessionId: number | null): UseWebRTCReturn {
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
 
-  // 로컬 미디어 스트림 획득
   const getLocalStream = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -49,11 +47,9 @@ export function useWebRTC(sessionId: number | null): UseWebRTCReturn {
     }
   }, []);
 
-  // PeerConnection 생성
   const createPeerConnection = useCallback(() => {
     const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
 
-    // ICE candidate 이벤트
     pc.onicecandidate = (event) => {
       if (event.candidate && wsRef.current?.readyState === WebSocket.OPEN) {
         wsRef.current.send(JSON.stringify({
@@ -63,7 +59,6 @@ export function useWebRTC(sessionId: number | null): UseWebRTCReturn {
       }
     };
 
-    // 연결 상태 변경
     pc.onconnectionstatechange = () => {
       if (pc.connectionState === 'connected') {
         setIsConnected(true);
@@ -73,12 +68,10 @@ export function useWebRTC(sessionId: number | null): UseWebRTCReturn {
       }
     };
 
-    // 원격 트랙 수신
     pc.ontrack = (event) => {
       setRemoteStream(event.streams[0]);
     };
 
-    // 로컬 트랙 추가
     if (localStreamRef.current) {
       localStreamRef.current.getTracks().forEach((track) => {
         pc.addTrack(track, localStreamRef.current!);
@@ -89,7 +82,6 @@ export function useWebRTC(sessionId: number | null): UseWebRTCReturn {
     return pc;
   }, []);
 
-  // WebSocket 연결 및 시그널링
   const connectSignaling = useCallback(() => {
     if (!sessionId) return;
 
@@ -99,7 +91,7 @@ export function useWebRTC(sessionId: number | null): UseWebRTCReturn {
     const ws = new WebSocket(`${WS_BASE_URL}/ws/signal/${sessionId}/?token=${token}`);
 
     ws.onopen = async () => {
-      // PeerConnection 생성 후 offer 전송
+
       const pc = createPeerConnection();
       
       try {
@@ -123,7 +115,7 @@ export function useWebRTC(sessionId: number | null): UseWebRTCReturn {
 
       switch (message.type) {
         case 'offer':
-          // Offer 수신 (상대방이 먼저 연결한 경우)
+
           await pc.setRemoteDescription(new RTCSessionDescription(message.data));
           const answer = await pc.createAnswer();
           await pc.setLocalDescription(answer);
@@ -134,12 +126,12 @@ export function useWebRTC(sessionId: number | null): UseWebRTCReturn {
           break;
 
         case 'answer':
-          // Answer 수신
+
           await pc.setRemoteDescription(new RTCSessionDescription(message.data));
           break;
 
         case 'ice-candidate':
-          // ICE candidate 수신
+
           if (message.data) {
             await pc.addIceCandidate(new RTCIceCandidate(message.data));
           }
@@ -168,7 +160,6 @@ export function useWebRTC(sessionId: number | null): UseWebRTCReturn {
     wsRef.current = ws;
   }, [sessionId, createPeerConnection]);
 
-  // 통화 시작
   const startCall = useCallback(async () => {
     setIsConnecting(true);
     
@@ -181,22 +172,19 @@ export function useWebRTC(sessionId: number | null): UseWebRTCReturn {
     }
   }, [getLocalStream, connectSignaling]);
 
-  // 통화 종료
   const endCall = useCallback(() => {
-    // 로컬 스트림 정지
+
     if (localStreamRef.current) {
       localStreamRef.current.getTracks().forEach((track) => track.stop());
       localStreamRef.current = null;
       setLocalStream(null);
     }
 
-    // PeerConnection 종료
     if (peerConnectionRef.current) {
       peerConnectionRef.current.close();
       peerConnectionRef.current = null;
     }
 
-    // WebSocket 종료
     if (wsRef.current) {
       wsRef.current.close();
       wsRef.current = null;
@@ -207,7 +195,6 @@ export function useWebRTC(sessionId: number | null): UseWebRTCReturn {
     setIsConnecting(false);
   }, []);
 
-  // 비디오 토글
   const toggleVideo = useCallback(() => {
     if (localStreamRef.current) {
       const videoTrack = localStreamRef.current.getVideoTracks()[0];
@@ -218,7 +205,6 @@ export function useWebRTC(sessionId: number | null): UseWebRTCReturn {
     }
   }, []);
 
-  // 오디오 토글
   const toggleAudio = useCallback(() => {
     if (localStreamRef.current) {
       const audioTrack = localStreamRef.current.getAudioTracks()[0];
@@ -229,14 +215,12 @@ export function useWebRTC(sessionId: number | null): UseWebRTCReturn {
     }
   }, []);
 
-  // 컴포넌트 언마운트 시 정리
   useEffect(() => {
     return () => {
       endCall();
     };
   }, [endCall]);
 
-  // sessionId 변경 시 연결
   useEffect(() => {
     if (sessionId && !isConnected && !isConnecting) {
       startCall();

@@ -2,7 +2,6 @@ import React from "react";
 
 import styles from "./styles.module.scss";
 
-// 정렬 방향 const
 export const FlexAlign = {
   Start: "start",
   Center: "center",
@@ -12,7 +11,6 @@ export const FlexAlign = {
 
 export type FlexAlign = typeof FlexAlign[keyof typeof FlexAlign];
 
-// justify const
 export const FlexJustify = {
   Start: "start",
   Center: "center",
@@ -24,7 +22,6 @@ export const FlexJustify = {
 
 export type FlexJustify = typeof FlexJustify[keyof typeof FlexJustify];
 
-// 공통 Stack props
 interface StackProps {
   children: React.ReactNode;
   align?: FlexAlign;
@@ -37,7 +34,6 @@ interface StackProps {
   style?: React.CSSProperties;
 }
 
-// HStack 컴포넌트 (가로 배치)
 export const HStack: React.FC<StackProps> = ({
   children,
   align = FlexAlign.Start,
@@ -81,7 +77,6 @@ export const HStack: React.FC<StackProps> = ({
   );
 };
 
-// VStack 컴포넌트 (세로 배치)
 export const VStack: React.FC<StackProps> = ({
   children,
   align = FlexAlign.Start,

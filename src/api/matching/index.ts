@@ -3,9 +3,6 @@ import type { MatchingStatus, MatchingJoinResponse, MatchingLeaveResponse } from
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8088';
 
-/**
- * 현재 매칭 상태 조회
- */
 export const getMatchingStatus = async (): Promise<MatchingStatus> => {
   const response = await apiFetch(`${API_BASE_URL}/matching/status`);
   
@@ -16,9 +13,6 @@ export const getMatchingStatus = async (): Promise<MatchingStatus> => {
   return response.json();
 };
 
-/**
- * 매칭 큐 참가
- */
 export const joinMatchingQueue = async (): Promise<MatchingJoinResponse> => {
   const response = await apiFetch(`${API_BASE_URL}/matching/join`, {
     method: 'POST',
@@ -31,9 +25,6 @@ export const joinMatchingQueue = async (): Promise<MatchingJoinResponse> => {
   return response.json();
 };
 
-/**
- * 매칭 큐 탈퇴
- */
 export const leaveMatchingQueue = async (): Promise<MatchingLeaveResponse> => {
   const response = await apiFetch(`${API_BASE_URL}/matching/leave`, {
     method: 'POST',
@@ -46,9 +37,6 @@ export const leaveMatchingQueue = async (): Promise<MatchingLeaveResponse> => {
   return response.json();
 };
 
-/**
- * 매칭 세션 종료
- */
 export const endMatchingSession = async (sessionId: number): Promise<{ status: string; message: string }> => {
   const response = await apiFetch(`${API_BASE_URL}/matching/end/${sessionId}`, {
     method: 'POST',

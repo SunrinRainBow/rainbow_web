@@ -10,7 +10,7 @@ export default function Orb({
 }) {
   const ctnDom = useRef<HTMLDivElement>(null);
 
-  const vert = /* glsl */ `
+  const vert =  `
     precision highp float;
     attribute vec2 position;
     attribute vec2 uv;
@@ -21,7 +21,7 @@ export default function Orb({
     }
   `;
 
-  const frag = /* glsl */ `
+  const frag =  `
     precision highp float;
 
     uniform float iTime;
@@ -281,7 +281,7 @@ export default function Orb({
       }
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [hue, hoverIntensity, rotateOnHover, forceHoverState]);
 
   return <div ref={ctnDom} className={styles.orbContainer} />;

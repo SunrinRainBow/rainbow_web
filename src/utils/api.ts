@@ -1,6 +1,4 @@
-/**
- * API 요청 시 JWT 토큰을 자동으로 포함하는 fetch 래퍼
- */
+
 export const apiFetch = async (
   url: string,
   options: RequestInit = {}
@@ -21,7 +19,4 @@ export const apiFetch = async (
     headers,
   });
 };
-
-
-
 

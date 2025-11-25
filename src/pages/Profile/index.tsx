@@ -20,7 +20,6 @@ export default function Profile() {
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // 프로필 정보 불러오기
   useEffect(() => {
     const fetchProfile = async () => {
       if (!isAuthenticated) return;
@@ -35,7 +34,7 @@ export default function Profile() {
         setSelectedCategories(profile.categories || []);
       } catch (error) {
         console.error("Failed to fetch profile:", error);
-        // 기본값으로 사용자 이름 사용
+
         if (user?.name) {
           setNickname(user.name);
         }
@@ -88,7 +87,6 @@ export default function Profile() {
               <br />더 정확한 매칭을 도와드릴 수 있습니다.
             </p>
 
-            {/* Google 로그인 정보 표시 */}
             {user && (
               <div className={styles.user_info_section}>
                 <h2 className={styles.section_title}>Google 계정 정보</h2>
@@ -142,7 +140,7 @@ export default function Profile() {
             )}
 
             <div className={styles.form}>
-              {/* 프로필 이미지 섹션 */}
+              
               <div className={styles.section}>
                 <h2 className={styles.section_title}>프로필 사진</h2>
                 <div className={styles.avatar_section}>
@@ -180,7 +178,6 @@ export default function Profile() {
                 </div>
               </div>
 
-              {/* 기본 정보 섹션 */}
               <div className={styles.section}>
                 <h2 className={styles.section_title}>기본 정보</h2>
                 <div className={styles.form_grid}>
@@ -205,7 +202,6 @@ export default function Profile() {
                 </div>
               </div>
 
-              {/* 국가 및 성별 섹션 */}
               <div className={styles.section}>
                 <h2 className={styles.section_title}>국가 및 성별</h2>
                 <div className={styles.form_grid}>
@@ -257,7 +253,6 @@ export default function Profile() {
                 </div>
               </div>
 
-              {/* 관심사 섹션 */}
               <div className={styles.section}>
                 <h2 className={styles.section_title}>내 관심사</h2>
                 <p className={styles.section_description}>
@@ -270,14 +265,12 @@ export default function Profile() {
                 />
               </div>
 
-              {/* 메시지 표시 */}
               {message && (
                 <div className={`${styles.message} ${styles[message.type]}`}>
                   {message.text}
                 </div>
               )}
 
-              {/* 저장 버튼 */}
               <div className={styles.action_buttons}>
                 <Button
                   variant="primary"

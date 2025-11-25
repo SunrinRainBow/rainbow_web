@@ -18,10 +18,10 @@ export default function Header() {
 
   const handleLoginClick = () => {
     if (isAuthenticated) {
-      // 로그인 상태면 프로필로 이동
+
       navigate("/profile");
     } else {
-      // 로그인 안 된 상태면 로그인 모달 표시
+
       setShowAuth(true);
     }
   };

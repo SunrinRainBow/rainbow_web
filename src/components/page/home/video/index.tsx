@@ -1,10 +1,11 @@
 import Loading from "./loading";
 import OnlyVoice from "./only-voice";
 import Camera from "./camera";
+import DeepARCamera from "./deepar-camera";
 import Default from "./defualt";
 import styles from "./styles.module.scss";
 
-export type VideoMode = "loading" | "only-voice" | "camera" | "default";
+export type VideoMode = "loading" | "only-voice" | "camera" | "deepar" | "default";
 
 interface VideoProps {
   mode?: VideoMode;
@@ -39,6 +40,13 @@ export default function Video({
           onVideoToggle={onVideoToggle}
           isVideoOn={isVideoOn}
           localStream={localStream}
+        />
+      )}
+      {mode === "deepar" && (
+        <DeepARCamera
+          showControls={showControls}
+          onVideoToggle={onVideoToggle}
+          isVideoOn={isVideoOn}
         />
       )}
       {mode === "default" && <Default remoteStream={remoteStream} />}

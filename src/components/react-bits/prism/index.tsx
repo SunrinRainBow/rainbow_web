@@ -68,14 +68,14 @@ const Prism = ({
     });
     container.appendChild(gl.canvas);
 
-    const vertex = /* glsl */ `
+    const vertex =  `
       attribute vec2 position;
       void main() {
         gl_Position = vec4(position, 0.0, 1.0);
       }
     `;
 
-    const fragment = /* glsl */ `
+    const fragment =  `
       precision highp float;
 
       uniform vec2  iResolution;

@@ -20,7 +20,6 @@ export default function Type() {
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // 선호도 정보 불러오기
   useEffect(() => {
     const fetchPreferences = async () => {
       if (!isAuthenticated) return;
@@ -86,7 +85,7 @@ export default function Type() {
             </p>
 
             <div className={styles.form}>
-              {/* 나이, 국가, 성별 섹션 */}
+              
               <div className={styles.section}>
                 <h2 className={styles.section_title}>기본 정보</h2>
                 <div className={styles.form_grid}>
@@ -148,7 +147,6 @@ export default function Type() {
                 </div>
               </div>
 
-              {/* 취향 카테고리 섹션 */}
               <div className={styles.section}>
                 <h2 className={styles.section_title}>취향 카테고리</h2>
                 <p className={styles.section_description}>
@@ -161,14 +159,12 @@ export default function Type() {
                 />
               </div>
 
-              {/* 메시지 표시 */}
               {message && (
                 <div className={`${styles.message} ${styles[message.type]}`}>
                   {message.text}
                 </div>
               )}
 
-              {/* 저장 버튼 */}
               <div className={styles.action_buttons}>
                 <Button
                   variant="primary"

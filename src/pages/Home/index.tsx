@@ -63,7 +63,6 @@ export default function Home() {
     await endSession();
   };
 
-  // 비디오 상태 동기화
   useEffect(() => {
     setIsVideoOn(isVideoEnabled);
   }, [isVideoEnabled]);
@@ -73,7 +72,7 @@ export default function Home() {
       <Header />
       <MainLayout>
         <div className={styles.container}>
-          {/* 에러 메시지 */}
+          
           {matchingError && (
             <div className={styles.error_message}>
               <span>{matchingError}</span>
@@ -81,7 +80,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* 매칭 컨트롤 */}
           <div className={styles.matching_controls}>
             {!isAuthenticated ? (
               <div className={styles.login_prompt}>
@@ -120,11 +118,11 @@ export default function Home() {
           </div>
 
           <div className={styles.video_grid}>
-            {/* 왼쪽: 본인 화면 */}
+            
             <div className={styles.local_section}>
               <div className={styles.video_wrapper}>
                 <Video
-                  mode={isVideoOn ? "camera" : "only-voice"}
+                  mode={isVideoOn ? "deepar" : "only-voice"}
                   showControls={true}
                   onVideoToggle={handleVideoToggle}
                   isVideoOn={isVideoOn}
@@ -134,7 +132,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 오른쪽: 상대방 화면 */}
             <div className={styles.remote_section}>
               <div className={styles.video_wrapper}>
                 <Video 
@@ -148,7 +145,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 연결 상태 표시 */}
           {isConnecting && (
             <div className={styles.connection_status}>
               연결 중...

@@ -2,7 +2,6 @@ import React from "react";
 
 import styles from "./styles.module.scss";
 
-// 타이포그래피 variant 타입 정의
 type TypographyVariant =
   | "display"
   | "headline"
@@ -11,7 +10,6 @@ type TypographyVariant =
   | "subtext"
   | "caption";
 
-// HTML 텍스트 태그의 모든 props를 상속받는 타입
 type TypoProps<T extends React.ElementType = "span"> = {
   as?: T;
   variant?: TypographyVariant;
@@ -22,7 +20,6 @@ type TypoProps<T extends React.ElementType = "span"> = {
   "as" | "variant" | "children" | "className"
 >;
 
-// Typo 컴포넌트
 const Typo = <T extends React.ElementType = "span">({
   as,
   variant = "body",
@@ -42,7 +39,6 @@ const Typo = <T extends React.ElementType = "span">({
   );
 };
 
-// 개별 타이포그래피 컴포넌트들
 Typo.Display = (props: any) => <Typo variant="display" {...props} />;
 Typo.Headline = (props: any) => <Typo variant="headline" {...props} />;
 Typo.BodyLarge = (props: any) => <Typo variant="bodyLarge" {...props} />;

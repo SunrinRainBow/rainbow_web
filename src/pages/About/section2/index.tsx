@@ -20,9 +20,8 @@ export default function Section2() {
           외모 부담 없이, 대화에만 집중할 수 있는 편안한 만남의 장을 제공합니다.
         </p>
 
-        {/* 주요 기능 카드들 */}
         <div className={styles.features_grid}>
-          {/* 취향 기반 매칭 */}
+          
           <div className={styles.feature_card}>
             <div className={styles.feature_header}>
               <Sparkles className={styles.feature_icon} />
@@ -35,7 +34,6 @@ export default function Section2() {
             </p>
           </div>
 
-          {/* 얼굴 필터 기능 */}
           <div className={styles.feature_card}>
             <div className={styles.feature_header}>
               <Filter className={styles.feature_icon} />
@@ -48,7 +46,6 @@ export default function Section2() {
             </p>
           </div>
 
-          {/* 대화 중심의 만남 */}
           <div className={styles.feature_card}>
             <div className={styles.feature_header}>
               <Heart className={styles.feature_icon} />

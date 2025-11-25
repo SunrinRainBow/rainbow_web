@@ -17,7 +17,7 @@ export default function OnlyVoice({
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
 
   useEffect(() => {
-    // 오디오만 가져오기
+
     const getAudioStream = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -35,7 +35,6 @@ export default function OnlyVoice({
 
     getAudioStream();
 
-    // cleanup
     return () => {
       if (audioStream) {
         audioStream.getTracks().forEach((track) => track.stop());
@@ -93,7 +92,7 @@ export default function OnlyVoice({
           <button
             className={styles.control_button}
             onClick={() => {
-              // TODO: 필터 기능 구현
+
             }}
             aria-label="필터"
           >

@@ -55,7 +55,6 @@ export default function Checkbox(props: CheckboxProps) {
     ...rest
   } = props;
 
-  // Filter out properties that shouldn't be passed to input element
   const inputProps = { ...rest };
   delete (inputProps as { children?: unknown }).children;
   delete (inputProps as { dangerouslySetInnerHTML?: unknown })
@@ -73,7 +72,6 @@ export default function Checkbox(props: CheckboxProps) {
   const descriptionId = description ? `${inputId}-desc` : undefined;
   const errorId = error ? `${inputId}-err` : undefined;
 
-  // Reflect indeterminate state to the native input property
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.indeterminate =

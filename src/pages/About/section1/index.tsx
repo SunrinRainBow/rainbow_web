@@ -6,7 +6,7 @@ export default function Section1() {
   return (
     <div className={styles.container}>
       <div className={styles.main}>
-        {/* 왼쪽: 히어로 섹션 */}
+        
         <div className={styles.hero_section}>
           <div className={styles.hero_content}>
             <h1 className={styles.hero_title}>
@@ -33,18 +33,14 @@ export default function Section1() {
           </div>
         </div>
 
-        {/* 오른쪽: 비디오 프리뷰 섹션 */}
         <div className={styles.preview_section}>
           <div className={styles.video_preview}>
-            {/* 비디오 컨테이너 */}
+            
             <div className={styles.video_container}>
               <div className={styles.video_placeholder}>
-                {/* 배경 그라데이션 애니메이션 */}
+                
                 <div className={styles.animated_background}></div>
 
-                {/* 사용자 아바타들 (오버레이) */}
-
-                {/* 중앙 콘텐츠 */}
                 <div className={styles.video_overlay}>
                   <div className={styles.central_content}>
                     <div className={styles.play_button}>
@@ -67,13 +63,11 @@ export default function Section1() {
                   </div>
                 </div>
 
-                {/* LIVE 배지 */}
                 <div className={styles.live_badge}>
                   <span className={styles.live_dot}></span>
                   <span>LIVE</span>
                 </div>
 
-                {/* 연결 중 애니메이션 */}
                 <div className={styles.connecting_dots}>
                   <span></span>
                   <span></span>

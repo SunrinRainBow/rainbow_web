@@ -21,7 +21,7 @@ export default function Camera({
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   useEffect(() => {
-    // 외부에서 전달받은 localStream이 있으면 사용
+
     if (localStream) {
       setStream(localStream);
       if (videoRef.current) {
@@ -30,7 +30,6 @@ export default function Camera({
       return;
     }
 
-    // 카메라 스트림 가져오기
     const getCameraStream = async () => {
       try {
         const cameraStream = await navigator.mediaDevices.getUserMedia({
@@ -49,7 +48,7 @@ export default function Camera({
     if (isVideoOn) {
       getCameraStream();
     } else {
-      // 비디오가 꺼져있을 때 스트림 정리
+
       if (stream && !localStream) {
         stream.getVideoTracks().forEach((track) => track.stop());
         setStream(null);
@@ -59,7 +58,6 @@ export default function Camera({
       }
     }
 
-    // cleanup (외부 스트림이 아닌 경우에만 정리)
     return () => {
       if (stream && !localStream) {
         stream.getTracks().forEach((track) => track.stop());
@@ -111,11 +109,12 @@ export default function Camera({
         </div>
       )}
 
-      {/* 필터 모달 */}
       <FilterModal
         isOpen={isFilterModalOpen}
         onClose={() => setIsFilterModalOpen(false)}
-        videoRef={videoRef}
+        onFilterSelect={(effect) => {
+          console.log('선택된 필터:', effect);
+        }}
       />
     </div>
   );

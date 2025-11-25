@@ -3,9 +3,6 @@ import type { User, ProfileData } from '../type';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8088';
 
-/**
- * 내 프로필 조회
- */
 export const getMyProfile = async (): Promise<User> => {
   const response = await apiFetch(`${API_BASE_URL}/profile/me`);
   
@@ -16,9 +13,6 @@ export const getMyProfile = async (): Promise<User> => {
   return response.json();
 };
 
-/**
- * 내 프로필 수정
- */
 export const updateMyProfile = async (data: ProfileData): Promise<User> => {
   const response = await apiFetch(`${API_BASE_URL}/profile/me`, {
     method: 'PUT',

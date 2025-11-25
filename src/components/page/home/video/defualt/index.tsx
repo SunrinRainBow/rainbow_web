@@ -8,14 +8,12 @@ interface DefaultProps {
 export default function Default({ remoteStream }: DefaultProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // remoteStream이 변경되면 비디오에 할당
   useEffect(() => {
     if (videoRef.current && remoteStream) {
       videoRef.current.srcObject = remoteStream;
     }
   }, [remoteStream]);
 
-  // 목데이터: 샘플 비디오나 플레이스홀더
   const mockData = {
     avatar: "/Avatar.svg",
     name: "상대방",

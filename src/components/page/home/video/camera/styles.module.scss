@@ -128,3 +128,30 @@
     height: 20px;
   }
 }
+
+// DeepAR 프리뷰
+.deepar_preview {
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+  }
+}
+
+// 필터 적용 표시
+.filter_indicator {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 8px 12px;
+  background: rgba(0, 246, 157, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 246, 157, 0.4);
+  border-radius: 20px;
+  font-size: 18px;
+  z-index: 10;
+}

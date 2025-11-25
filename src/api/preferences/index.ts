@@ -3,9 +3,6 @@ import type { PreferencesData } from '../type';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8088';
 
-/**
- * 내 매칭 선호도 조회
- */
 export const getMyPreferences = async (): Promise<PreferencesData> => {
   const response = await apiFetch(`${API_BASE_URL}/preferences/me`);
   
@@ -16,9 +13,6 @@ export const getMyPreferences = async (): Promise<PreferencesData> => {
   return response.json();
 };
 
-/**
- * 내 매칭 선호도 수정
- */
 export const updateMyPreferences = async (data: PreferencesData): Promise<PreferencesData> => {
   const response = await apiFetch(`${API_BASE_URL}/preferences/me`, {
     method: 'PUT',
