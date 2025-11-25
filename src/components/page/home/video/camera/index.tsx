@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react";
-import { VideoOff, Video, Smile } from "lucide-react";
+import { Video, Smile } from "lucide-react";
+import FilterModal from "../filter-modal";
 import styles from "./styles.module.scss";
 
 interface CameraProps {
@@ -17,6 +18,7 @@ export default function Camera({
 }: CameraProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   useEffect(() => {
     // 외부에서 전달받은 localStream이 있으면 사용
@@ -94,9 +96,7 @@ export default function Camera({
         <div className={styles.controls}>
           <button
             className={styles.control_button}
-            onClick={() => {
-              // TODO: 필터 기능 구현
-            }}
+            onClick={() => setIsFilterModalOpen(true)}
             aria-label="필터"
           >
             <Smile size={20} />
@@ -110,6 +110,13 @@ export default function Camera({
           </button>
         </div>
       )}
+
+      {/* 필터 모달 */}
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        videoRef={videoRef}
+      />
     </div>
   );
 }
