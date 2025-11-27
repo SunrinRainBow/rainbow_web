@@ -3,32 +3,28 @@ import Header from "@/components/layout/header";
 import MainLayout from "@/components/layout/main";
 import Video from "@/components/page/home/video";
 import { useAuth } from "@/contexts/AuthContext";
-import { useMatching } from "@/hooks/useMatching";
-import { useWebRTC } from "@/hooks/useWebRTC";
+import { useRoom } from "@/hooks/useRoom";
 import { Video as VideoIcon } from "lucide-react";
 import styles from "./styles.module.scss";
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
   const { 
-    status: matchingStatus, 
-    sessionId, 
+    status,
     matchedUser, 
-    error: matchingError,
-    join, 
-    leave, 
-    endSession,
-    clearError,
-  } = useMatching();
-  
-  const {
+    role,
     localStream,
     remoteStream,
-    isConnecting,
+    isConnected,
+    isWsConnected,
+    error,
+    join, 
+    leave, 
+    endCall,
     toggleVideo,
     isVideoEnabled,
-    endCall,
-  } = useWebRTC(sessionId);
+    clearError,
+  } = useRoom();
 
   const [isVideoOn, setIsVideoOn] = useState(true);
 
@@ -41,27 +37,39 @@ export default function Home() {
     clearError();
     try {
       await join();
-    } catch (error) {
-      console.error('Failed to start matching:', error);
+    } catch (err) {
+      console.error('Failed to start matching:', err);
     }
   };
 
   const handleStopMatching = async () => {
     try {
       await leave();
-    } catch (error) {
-      console.error('Failed to stop matching:', error);
+    } catch (err) {
+      console.error('Failed to stop matching:', err);
     }
   };
 
-  const handleEndCall = async () => {
+  const handleEndCall = () => {
     endCall();
-    await endSession();
   };
 
   useEffect(() => {
     setIsVideoOn(isVideoEnabled);
   }, [isVideoEnabled]);
+
+  const getStatusText = () => {
+    switch (status) {
+      case 'waiting':
+        return '매칭 중... 취소하려면 탭하세요';
+      case 'matched':
+        return isConnected ? '연결됨' : '연결 중...';
+      case 'connected':
+        return '통화 중';
+      default:
+        return '';
+    }
+  };
 
   return (
     <>
@@ -69,9 +77,9 @@ export default function Home() {
       <MainLayout>
         <div className={styles.container}>
           
-          {matchingError && (
+          {error && (
             <div className={styles.error_message}>
-              <span>{matchingError}</span>
+              <span>{error}</span>
               <button className={styles.error_close} onClick={clearError}>×</button>
             </div>
           )}
@@ -81,7 +89,12 @@ export default function Home() {
               <div className={styles.login_prompt}>
                 로그인 후 매칭을 시작할 수 있습니다.
               </div>
-            ) : matchingStatus === 'idle' ? (
+            ) : !isWsConnected ? (
+              <div className={styles.connecting_prompt}>
+                <div className={styles.waiting_spinner}></div>
+                <span>서버 연결 중...</span>
+              </div>
+            ) : status === 'idle' ? (
               <button className={styles.start_button} onClick={handleStartMatching}>
                 <VideoIcon size={20} />
                 <div className={styles.avatar_stack}>
@@ -93,17 +106,22 @@ export default function Home() {
                 </div>
                 <span>비디오챗 시작하기</span>
               </button>
-            ) : matchingStatus === 'waiting' ? (
+            ) : status === 'waiting' ? (
               <button className={styles.waiting_button} onClick={handleStopMatching}>
                 <div className={styles.waiting_spinner}></div>
-                <span>매칭 중... 취소하려면 탭하세요</span>
+                <span>{getStatusText()}</span>
               </button>
-            ) : matchingStatus === 'matched' ? (
+            ) : (status === 'matched' || status === 'connected') ? (
               <div className={styles.matched_controls}>
                 <div className={styles.matched_info}>
                   {matchedUser && (
                     <span className={styles.matched_name}>
-                      {matchedUser.nickname || matchedUser.name || '상대방'}과 연결됨
+                      {matchedUser.nickname || matchedUser.name || '상대방'}과 {isConnected ? '통화 중' : '연결 중...'}
+                    </span>
+                  )}
+                  {role && (
+                    <span className={styles.role_badge}>
+                      {role === 'initiator' ? '호스트' : '게스트'}
                     </span>
                   )}
                 </div>
@@ -132,7 +150,7 @@ export default function Home() {
             <div className={styles.remote_section}>
               <div className={styles.video_wrapper}>
                 <Video 
-                  mode={matchingStatus === 'matched' && remoteStream ? "default" : "loading"} 
+                  mode={(status === 'matched' || status === 'connected') && remoteStream ? "default" : "loading"} 
                   remoteStream={remoteStream} 
                 />
                 <div className={styles.video_label}>
@@ -142,9 +160,9 @@ export default function Home() {
             </div>
           </div>
 
-          {isConnecting && (
+          {(status === 'matched' || status === 'connected') && !isConnected && (
             <div className={styles.connection_status}>
-              연결 중...
+              WebRTC 연결 중...
             </div>
           )}
         </div>
