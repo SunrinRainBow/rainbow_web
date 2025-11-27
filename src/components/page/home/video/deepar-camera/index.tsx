@@ -8,14 +8,17 @@ interface DeepARCameraProps {
   showControls?: boolean;
   onVideoToggle?: () => void;
   isVideoOn?: boolean;
+  onStreamReady?: (stream: MediaStream) => void;
 }
 
 export default function DeepARCamera({
   showControls = false,
   onVideoToggle,
+  onStreamReady,
 }: DeepARCameraProps) {
   const previewRef = useRef<HTMLDivElement>(null);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const streamSentRef = useRef(false);
   
   const {
     isInitialized,
@@ -25,6 +28,7 @@ export default function DeepARCamera({
     initialize,
     switchEffect,
     clearEffect,
+    getOutputStream,
   } = useDeepAR();
 
   useEffect(() => {
@@ -32,6 +36,22 @@ export default function DeepARCamera({
       initialize(previewRef.current);
     }
   }, [isInitialized, isLoading, initialize]);
+
+  useEffect(() => {
+    if (isInitialized && onStreamReady && !streamSentRef.current) {
+      const checkStream = () => {
+        const stream = getOutputStream();
+        if (stream && stream.getVideoTracks().length > 0) {
+          console.log('DeepAR stream ready, sending to parent');
+          onStreamReady(stream);
+          streamSentRef.current = true;
+        } else {
+          setTimeout(checkStream, 100);
+        }
+      };
+      checkStream();
+    }
+  }, [isInitialized, onStreamReady, getOutputStream]);
 
   const handleVideoToggle = () => {
     onVideoToggle?.();

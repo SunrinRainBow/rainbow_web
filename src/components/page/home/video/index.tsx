@@ -14,6 +14,7 @@ interface VideoProps {
   showControls?: boolean;
   onVideoToggle?: () => void;
   isVideoOn?: boolean;
+  onStreamReady?: (stream: MediaStream) => void;
 }
 
 export default function Video({
@@ -23,6 +24,7 @@ export default function Video({
   showControls = false,
   onVideoToggle,
   isVideoOn = true,
+  onStreamReady,
 }: VideoProps) {
   return (
     <div className={styles.container}>
@@ -47,6 +49,7 @@ export default function Video({
           showControls={showControls}
           onVideoToggle={onVideoToggle}
           isVideoOn={isVideoOn}
+          onStreamReady={onStreamReady}
         />
       )}
       {mode === "default" && <Default remoteStream={remoteStream} />}

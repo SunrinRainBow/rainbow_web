@@ -24,6 +24,7 @@ export default function Home() {
     toggleVideo,
     isVideoEnabled,
     clearError,
+    setDeepARStream,
   } = useRoom();
 
   const [isVideoOn, setIsVideoOn] = useState(true);
@@ -142,6 +143,7 @@ export default function Home() {
                   onVideoToggle={handleVideoToggle}
                   isVideoOn={isVideoOn}
                   localStream={localStream}
+                  onStreamReady={setDeepARStream}
                 />
                 <div className={styles.video_label}>나</div>
               </div>

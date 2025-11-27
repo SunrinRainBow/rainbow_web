@@ -43,6 +43,7 @@ interface UseDeepARReturn {
   clearEffect: () => Promise<void>;
   takeScreenshot: () => Promise<string | null>;
   backgroundBlur: (enable: boolean, strength?: number) => Promise<void>;
+  getOutputStream: () => MediaStream | null;
   destroy: () => void;
 }
 
@@ -51,6 +52,8 @@ export function useDeepAR(): UseDeepARReturn {
   const licenseKey = import.meta.env.VITE_DEEPAR_LICENSE_KEY || '';
 
   const deepARRef = useRef<deepar.DeepAR | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const outputStreamRef = useRef<MediaStream | null>(null);
   
   const [isInitialized, setIsInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -80,6 +83,14 @@ export function useDeepAR(): UseDeepARReturn {
       });
 
       deepARRef.current = deepARInstance;
+      
+      const canvas = previewElement.querySelector('canvas');
+      if (canvas) {
+        canvasRef.current = canvas;
+        outputStreamRef.current = canvas.captureStream(30);
+        console.log('DeepAR output stream created:', outputStreamRef.current);
+      }
+      
       setIsInitialized(true);
       setCurrentEffect(null);
     } catch (err) {
@@ -146,10 +157,22 @@ export function useDeepAR(): UseDeepARReturn {
     }
   }, []);
 
+  const getOutputStream = useCallback((): MediaStream | null => {
+    if (!canvasRef.current) return null;
+    
+    if (!outputStreamRef.current) {
+      outputStreamRef.current = canvasRef.current.captureStream(30);
+    }
+    
+    return outputStreamRef.current;
+  }, []);
+
   const destroy = useCallback(() => {
     if (deepARRef.current) {
       deepARRef.current.shutdown();
       deepARRef.current = null;
+      canvasRef.current = null;
+      outputStreamRef.current = null;
       setIsInitialized(false);
       setCurrentEffect(null);
     }
@@ -171,6 +194,7 @@ export function useDeepAR(): UseDeepARReturn {
     clearEffect,
     takeScreenshot,
     backgroundBlur,
+    getOutputStream,
     destroy,
   };
 }

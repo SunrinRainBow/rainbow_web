@@ -29,6 +29,7 @@ interface UseRoomReturn {
   isVideoEnabled: boolean;
   isAudioEnabled: boolean;
   clearError: () => void;
+  setDeepARStream: (stream: MediaStream) => void;
 }
 
 export function useRoom(): UseRoomReturn {
@@ -48,6 +49,7 @@ export function useRoom(): UseRoomReturn {
   const wsRef = useRef<WebSocket | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
+  const deepARStreamRef = useRef<MediaStream | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const clearError = useCallback(() => {
@@ -105,9 +107,27 @@ export function useRoom(): UseRoomReturn {
       setRemoteStream(event.streams[0]);
     };
 
-    if (localStreamRef.current) {
-      localStreamRef.current.getTracks().forEach((track) => {
-        pc.addTrack(track, localStreamRef.current!);
+    const deepARStream = deepARStreamRef.current;
+    const localStream = localStreamRef.current;
+
+    if (deepARStream) {
+      const videoTrack = deepARStream.getVideoTracks()[0];
+      if (videoTrack) {
+        console.log('Adding DeepAR video track to peer connection');
+        pc.addTrack(videoTrack, deepARStream);
+      }
+      
+      if (localStream) {
+        const audioTrack = localStream.getAudioTracks()[0];
+        if (audioTrack) {
+          console.log('Adding local audio track to peer connection');
+          pc.addTrack(audioTrack, localStream);
+        }
+      }
+    } else if (localStream) {
+      console.log('No DeepAR stream, using local stream');
+      localStream.getTracks().forEach((track) => {
+        pc.addTrack(track, localStream);
       });
     }
 
@@ -376,6 +396,11 @@ export function useRoom(): UseRoomReturn {
     }
   }, []);
 
+  const setDeepARStream = useCallback((stream: MediaStream) => {
+    console.log('DeepAR stream set:', stream);
+    deepARStreamRef.current = stream;
+  }, []);
+
   return {
     status,
     sessionId,
@@ -395,5 +420,6 @@ export function useRoom(): UseRoomReturn {
     isVideoEnabled,
     isAudioEnabled,
     clearError,
+    setDeepARStream,
   };
 }
