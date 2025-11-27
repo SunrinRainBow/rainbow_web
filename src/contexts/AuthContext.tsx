@@ -7,7 +7,6 @@ import {
 } from "react";
 import type { User } from "@/api/type";
 import {
-  handleGoogleCallback,
   logout as logoutApi,
   startGoogleLogin,
 } from "@/api/auth/service";
@@ -60,18 +59,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-    const email = urlParams.get('email');
-    const name = urlParams.get('name');
-    const avatar = urlParams.get('avatar');
-
-    if (token && email && window.location.pathname === '/auth/callback') {
     const token = urlParams.get("token");
     const email = urlParams.get("email");
     const name = urlParams.get("name");
     const avatar = urlParams.get("avatar");
 
-    // 백엔드에서 리다이렉트된 경우 (토큰이 URL 파라미터로 전달됨)
     if (token && email && window.location.pathname === "/auth/callback") {
       setIsLoading(true);
 
@@ -83,22 +75,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       setUser(user);
       setToken(token);
-      localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', token);
-
-      window.history.replaceState({}, document.title, '/auth/callback');
-
-      setTimeout(() => {
-        window.location.href = '/';
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", token);
 
-      // URL에서 파라미터 제거
       window.history.replaceState({}, document.title, "/auth/callback");
 
-      // 프로필 페이지로 리다이렉트
       setTimeout(() => {
-        window.location.href = "/profile";
+        window.location.href = "/";
       }, 500);
 
       setIsLoading(false);
@@ -117,10 +100,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       localStorage.removeItem("user");
       localStorage.removeItem("token");
     } catch (error) {
-      console.error('Logout error:', error);
-
       console.error("Logout error:", error);
-      // 에러가 발생해도 로컬 상태는 초기화
       setUser(null);
       setToken(null);
       localStorage.removeItem("user");
