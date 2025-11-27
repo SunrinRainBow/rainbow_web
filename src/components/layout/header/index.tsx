@@ -35,6 +35,13 @@ export default function Header() {
     setShowAuth(false);
   };
 
+  const handleProtectedLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!isAuthenticated) {
+      e.preventDefault();
+      setShowAuth(true);
+    }
+  };
+
   return (
     <>
       <div className={s.container}>
@@ -54,12 +61,14 @@ export default function Header() {
               className={
                 isActive("/profile") ? s.menu_item_active : s.menu_item
               }
+              onClick={handleProtectedLinkClick}
             >
               Profile
             </Link>
             <Link
               to="/type"
               className={isActive("/type") ? s.menu_item_active : s.menu_item}
+              onClick={handleProtectedLinkClick}
             >
               Type
             </Link>
