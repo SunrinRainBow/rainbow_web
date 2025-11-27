@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { MatchingStatus, MatchedUser } from '@/api/type';
-import { joinMatchingQueue, leaveMatchingQueue, getMatchingStatus, endMatchingSession } from '@/api/matching';
+import type { MatchedUser } from '@/api/type';
+import { joinMatchingQueue, leaveMatchingQueue, endMatchingSession } from '@/api/matching';
 
 const WS_BASE_URL = import.meta.env.VITE_WS_BASE_URL || 'ws://localhost:8088';
 

@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { Video, Smile, VideoOff } from "lucide-react";
+import { Smile, VideoOff } from "lucide-react";
 import styles from "./styles.module.scss";
 
 interface OnlyVoiceProps {
@@ -11,7 +11,6 @@ interface OnlyVoiceProps {
 export default function OnlyVoice({
   showControls = false,
   onVideoToggle,
-  isVideoOn = false,
 }: OnlyVoiceProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);

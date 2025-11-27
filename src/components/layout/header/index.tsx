@@ -9,7 +9,7 @@ import { Clock, User, LogOut } from "lucide-react";
 export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, user, login, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
 
   const isActive = (path: string) => {

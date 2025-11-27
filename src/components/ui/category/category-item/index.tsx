@@ -10,7 +10,6 @@ export interface CategoryItemProps {
 }
 
 export default function CategoryItem({
-  id,
   label,
   description,
   icon,
