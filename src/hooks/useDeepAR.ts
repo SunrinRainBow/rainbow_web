@@ -69,11 +69,9 @@ export function useDeepAR(): UseDeepARReturn {
     setError(null);
 
     try {
-      // 공식 문서: https://docs.deepar.ai/deepar-sdk/platforms/web/getting-started
       const deepARInstance = await deepar.initialize({
         licenseKey,
         previewElement,
-        effect: `${DEEPAR_EFFECTS_CDN}aviators`,
         additionalOptions: {
           cameraConfig: {
             facingMode: 'user',
@@ -83,7 +81,7 @@ export function useDeepAR(): UseDeepARReturn {
 
       deepARRef.current = deepARInstance;
       setIsInitialized(true);
-      setCurrentEffect('aviators');
+      setCurrentEffect(null);
     } catch (err) {
       console.error('DeepAR 초기화 실패:', err);
       setError('DeepAR 초기화에 실패했습니다. 라이센스 키를 확인해주세요.');
