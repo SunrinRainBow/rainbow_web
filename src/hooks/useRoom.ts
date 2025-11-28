@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { MatchedUser } from '@/api/type';
 
-const WS_BASE_URL = import.meta.env.VITE_WS_BASE_URL || 'ws://localhost:8088';
+const WS_BASE_URL = (import.meta.env.VITE_WS_BASE_URL || 'ws://localhost:8088').replace(/\/$/, '');
 
 const ICE_SERVERS = [
   { urls: 'stun:stun.l.google.com:19302' },

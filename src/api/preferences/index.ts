@@ -1,7 +1,7 @@
 import { apiFetch } from '@/utils/api';
 import type { PreferencesData } from '../type';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8088';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8088').replace(/\/$/, '');
 
 export const getMyPreferences = async (): Promise<PreferencesData> => {
   const response = await apiFetch(`${API_BASE_URL}/preferences/me`);

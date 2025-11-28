@@ -1,7 +1,7 @@
 import { apiFetch } from '@/utils/api';
 import type { MatchingStatus, MatchingJoinResponse, MatchingLeaveResponse } from '../type';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8088';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8088').replace(/\/$/, '');
 
 export const getMatchingStatus = async (): Promise<MatchingStatus> => {
   const response = await apiFetch(`${API_BASE_URL}/matching/status`);

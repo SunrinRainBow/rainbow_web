@@ -1,7 +1,7 @@
 import type { AuthResponse } from '../type';
 import { apiFetch } from '@/utils/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8088';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8088').replace(/\/$/, '');
 
 export const startGoogleLogin = () => {
   window.location.href = `${API_BASE_URL}/auth/login/google`;
