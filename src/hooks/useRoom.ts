@@ -129,17 +129,32 @@ export function useRoom(): UseRoomReturn {
       }
     };
 
-    // 항상 localStream 트랙을 먼저 추가 (DeepAR은 나중에 replaceTrack으로 교체)
+    // DeepAR 스트림이 있으면 우선 사용, 없으면 localStream 사용
+    const deepARStream = deepARStreamRef.current;
     const localStream = localStreamRef.current;
     
-    if (localStream) {
+    if (deepARStream && localStream) {
+      // DeepAR 비디오 + 로컬 오디오
+      console.log('Using DeepAR stream for video');
+      const videoTrack = deepARStream.getVideoTracks()[0];
+      const audioTrack = localStream.getAudioTracks()[0];
+      
+      if (videoTrack) {
+        console.log('Adding DeepAR video track:', videoTrack.id);
+        pc.addTrack(videoTrack, deepARStream);
+      }
+      if (audioTrack) {
+        console.log('Adding local audio track:', audioTrack.id);
+        pc.addTrack(audioTrack, localStream);
+      }
+    } else if (localStream) {
       console.log('Adding local tracks to peer connection:', localStream.getTracks().map(t => t.kind));
       localStream.getTracks().forEach((track) => {
         console.log('Adding track:', track.kind, track.id);
         pc.addTrack(track, localStream);
       });
     } else {
-      console.warn('⚠️ No local stream available when creating peer connection!');
+      console.warn('⚠️ No stream available when creating peer connection!');
     }
 
     peerConnectionRef.current = pc;
@@ -421,28 +436,37 @@ export function useRoom(): UseRoomReturn {
   }, []);
 
   const setDeepARStream = useCallback((stream: MediaStream) => {
-    console.log('DeepAR stream set:', stream);
+    console.log('🎭 DeepAR stream received:', stream.id);
+    console.log('🎭 DeepAR video tracks:', stream.getVideoTracks().map(t => t.id));
     deepARStreamRef.current = stream;
     
-    // 이미 peer connection이 있으면 트랙 추가
+    // 이미 peer connection이 있으면 트랙 교체
     const pc = peerConnectionRef.current;
     if (pc) {
-      // 기존 비디오 트랙 제거
+      console.log('🎭 Peer connection exists, replacing video track');
       const senders = pc.getSenders();
-      const videoSender = senders.find(s => s.track?.kind === 'video');
+      console.log('🎭 Current senders:', senders.map(s => s.track?.kind));
       
+      const videoSender = senders.find(s => s.track?.kind === 'video');
       const videoTrack = stream.getVideoTracks()[0];
+      
       if (videoTrack) {
         if (videoSender) {
-          // 기존 sender가 있으면 트랙 교체
-          console.log('Replacing video track with DeepAR track');
-          videoSender.replaceTrack(videoTrack);
+          console.log('🎭 Replacing existing video track with DeepAR track');
+          videoSender.replaceTrack(videoTrack).then(() => {
+            console.log('✅ Video track replaced successfully');
+          }).catch((err) => {
+            console.error('❌ Failed to replace track:', err);
+          });
         } else {
-          // 없으면 새로 추가
-          console.log('Adding DeepAR video track to existing peer connection');
+          console.log('🎭 No video sender found, adding new track');
           pc.addTrack(videoTrack, stream);
         }
+      } else {
+        console.warn('⚠️ No video track in DeepAR stream!');
       }
+    } else {
+      console.log('🎭 No peer connection yet, DeepAR stream saved for later');
     }
   }, []);
 
