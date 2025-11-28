@@ -6,6 +6,20 @@ const WS_BASE_URL = (import.meta.env.VITE_WS_BASE_URL || 'ws://localhost:8088').
 const ICE_SERVERS = [
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
+  { urls: 'stun:stun2.l.google.com:19302' },
+  { urls: 'stun:stun3.l.google.com:19302' },
+  { urls: 'stun:stun4.l.google.com:19302' },
+  // 무료 TURN 서버 (테스트용)
+  {
+    urls: 'turn:openrelay.metered.ca:80',
+    username: 'openrelayproject',
+    credential: 'openrelayproject',
+  },
+  {
+    urls: 'turn:openrelay.metered.ca:443',
+    username: 'openrelayproject',
+    credential: 'openrelayproject',
+  },
 ];
 
 type RoomStatus = 'idle' | 'waiting' | 'matched' | 'connected';
@@ -84,12 +98,17 @@ export function useRoom(): UseRoomReturn {
     const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
 
     pc.onicecandidate = (event) => {
+      console.log('ICE candidate:', event.candidate ? 'found' : 'gathering complete');
       if (event.candidate && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({
           type: 'ice-candidate',
           data: event.candidate,
         }));
       }
+    };
+
+    pc.oniceconnectionstatechange = () => {
+      console.log('ICE connection state:', pc.iceConnectionState);
     };
 
     pc.onconnectionstatechange = () => {
@@ -103,32 +122,24 @@ export function useRoom(): UseRoomReturn {
     };
 
     pc.ontrack = (event) => {
-      console.log('Remote track received:', event.streams[0]);
-      setRemoteStream(event.streams[0]);
+      console.log('🎥 Remote track received!', event.track.kind, event.streams);
+      if (event.streams && event.streams[0]) {
+        console.log('Setting remote stream with tracks:', event.streams[0].getTracks().map(t => t.kind));
+        setRemoteStream(event.streams[0]);
+      }
     };
 
-    const deepARStream = deepARStreamRef.current;
+    // 항상 localStream 트랙을 먼저 추가 (DeepAR은 나중에 replaceTrack으로 교체)
     const localStream = localStreamRef.current;
-
-    if (deepARStream) {
-      const videoTrack = deepARStream.getVideoTracks()[0];
-      if (videoTrack) {
-        console.log('Adding DeepAR video track to peer connection');
-        pc.addTrack(videoTrack, deepARStream);
-      }
-      
-      if (localStream) {
-        const audioTrack = localStream.getAudioTracks()[0];
-        if (audioTrack) {
-          console.log('Adding local audio track to peer connection');
-          pc.addTrack(audioTrack, localStream);
-        }
-      }
-    } else if (localStream) {
-      console.log('No DeepAR stream, using local stream');
+    
+    if (localStream) {
+      console.log('Adding local tracks to peer connection:', localStream.getTracks().map(t => t.kind));
       localStream.getTracks().forEach((track) => {
+        console.log('Adding track:', track.kind, track.id);
         pc.addTrack(track, localStream);
       });
+    } else {
+      console.warn('⚠️ No local stream available when creating peer connection!');
     }
 
     peerConnectionRef.current = pc;
