@@ -196,6 +196,14 @@ export function useRoom(): UseRoomReturn {
     console.log('Connecting to WebSocket:', `${WS_BASE_URL}/ws/room/?token=${token.substring(0, 20)}...`);
 
     const ws = new WebSocket(`${WS_BASE_URL}/ws/room/?token=${token}`);
+
+    const handleBeforeUnload = () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ action: 'end-call' }));
+        ws.send(JSON.stringify({ action: 'leave' }));
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
     
     ws.onopen = () => {
       console.log('WebSocket connected!');
@@ -311,10 +319,15 @@ export function useRoom(): UseRoomReturn {
     wsRef.current = ws;
 
     return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
-      if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ action: 'end-call' }));
+        ws.send(JSON.stringify({ action: 'leave' }));
+        ws.close();
+      } else if (ws.readyState === WebSocket.CONNECTING) {
         ws.close();
       }
       if (localStreamRef.current) {

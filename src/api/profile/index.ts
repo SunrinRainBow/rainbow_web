@@ -26,3 +26,4 @@ export const updateMyProfile = async (data: ProfileData): Promise<User> => {
   return response.json();
 };
 
+

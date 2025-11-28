@@ -26,3 +26,4 @@ export const updateMyPreferences = async (data: PreferencesData): Promise<Prefer
   return response.json();
 };
 
+
