@@ -412,6 +412,27 @@ export function useRoom(): UseRoomReturn {
   const setDeepARStream = useCallback((stream: MediaStream) => {
     console.log('DeepAR stream set:', stream);
     deepARStreamRef.current = stream;
+    
+    // 이미 peer connection이 있으면 트랙 추가
+    const pc = peerConnectionRef.current;
+    if (pc) {
+      // 기존 비디오 트랙 제거
+      const senders = pc.getSenders();
+      const videoSender = senders.find(s => s.track?.kind === 'video');
+      
+      const videoTrack = stream.getVideoTracks()[0];
+      if (videoTrack) {
+        if (videoSender) {
+          // 기존 sender가 있으면 트랙 교체
+          console.log('Replacing video track with DeepAR track');
+          videoSender.replaceTrack(videoTrack);
+        } else {
+          // 없으면 새로 추가
+          console.log('Adding DeepAR video track to existing peer connection');
+          pc.addTrack(videoTrack, stream);
+        }
+      }
+    }
   }, []);
 
   return {
