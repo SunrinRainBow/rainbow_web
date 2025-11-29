@@ -9,7 +9,7 @@ import { Clock, User, LogOut } from "lucide-react";
 export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
 
   const isActive = (path: string) => {
@@ -17,13 +17,7 @@ export default function Header() {
   };
 
   const handleLoginClick = () => {
-    if (isAuthenticated) {
-
-      navigate("/profile");
-    } else {
-
-      setShowAuth(true);
-    }
+    setShowAuth(true);
   };
 
   const handleLogout = async () => {
@@ -86,27 +80,15 @@ export default function Header() {
               지난 대화 상대
             </Button>
           </div>
-          {isAuthenticated && user ? (
-            <div className={s.user_info}>
-              <div className={s.user_avatar} onClick={handleLoginClick}>
-                {user.avatar ? (
-                  <img src={user.avatar} alt={user.name || "User"} />
-                ) : (
-                  <div className={s.avatar_placeholder}>
-                    <User size={20} />
-                  </div>
-                )}
-              </div>
-              <span className={s.user_name}>{user.name || user.email}</span>
-              <Button
-                leadingIcon={<LogOut />}
-                size="medium"
-                variant="secondary"
-                onClick={handleLogout}
-              >
-                로그아웃
-              </Button>
-            </div>
+          {isAuthenticated ? (
+            <Button
+              leadingIcon={<LogOut />}
+              size="medium"
+              variant="secondary"
+              onClick={handleLogout}
+            >
+              로그아웃
+            </Button>
           ) : (
             <div className={s.login}>
               <Button
