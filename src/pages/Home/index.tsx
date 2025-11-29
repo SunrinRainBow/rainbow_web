@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "@/components/layout/header";
 import MainLayout from "@/components/layout/main";
 import Video from "@/components/page/home/video";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoom } from "@/hooks/useRoom";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { Video as VideoIcon } from "lucide-react";
 import styles from "./styles.module.scss";
 
@@ -27,7 +28,33 @@ export default function Home() {
     setDeepARStream,
   } = useRoom();
 
+  const { playMatchSuccess, playCallStart, playCallEnd } = useSoundEffects();
+  const prevStatusRef = useRef(status);
+  const prevConnectedRef = useRef(isConnected);
   const [isVideoOn, setIsVideoOn] = useState(true);
+
+  // 효과음 재생
+  useEffect(() => {
+    // 매칭 성공 시
+    if (prevStatusRef.current !== 'matched' && status === 'matched') {
+      playMatchSuccess();
+    }
+    
+    // 통화 종료 시 (matched/connected → idle)
+    if ((prevStatusRef.current === 'matched' || prevStatusRef.current === 'connected') && status === 'idle') {
+      playCallEnd();
+    }
+    
+    prevStatusRef.current = status;
+  }, [status, playMatchSuccess, playCallEnd]);
+
+  // WebRTC 연결 완료 시
+  useEffect(() => {
+    if (!prevConnectedRef.current && isConnected) {
+      playCallStart();
+    }
+    prevConnectedRef.current = isConnected;
+  }, [isConnected, playCallStart]);
 
   const handleVideoToggle = () => {
     toggleVideo();
@@ -152,7 +179,13 @@ export default function Home() {
             <div className={styles.remote_section}>
               <div className={styles.video_wrapper}>
                 <Video 
-                  mode={(status === 'matched' || status === 'connected') && remoteStream ? "default" : "loading"} 
+                  mode={
+                    (status === 'matched' || status === 'connected') && remoteStream 
+                      ? "default" 
+                      : status === 'waiting' 
+                        ? "loading"
+                        : "idle"
+                  } 
                   remoteStream={remoteStream} 
                 />
                 <div className={styles.video_label}>

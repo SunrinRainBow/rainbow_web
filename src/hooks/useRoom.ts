@@ -121,12 +121,28 @@ export function useRoom(): UseRoomReturn {
       }
     };
 
+    // Remote stream을 저장할 ref
+    let remoteMediaStream: MediaStream | null = null;
+    
     pc.ontrack = (event) => {
-      console.log('🎥 Remote track received!', event.track.kind, event.streams);
-      if (event.streams && event.streams[0]) {
-        console.log('Setting remote stream with tracks:', event.streams[0].getTracks().map(t => t.kind));
-        setRemoteStream(event.streams[0]);
+      console.log('🎥 Remote track received!', event.track.kind);
+      
+      if (!remoteMediaStream) {
+        remoteMediaStream = new MediaStream();
       }
+      
+      // 이미 같은 트랙이 있는지 확인
+      const existingTrack = remoteMediaStream.getTracks().find(t => t.id === event.track.id);
+      if (!existingTrack) {
+        console.log('Adding track to remote stream:', event.track.kind);
+        remoteMediaStream.addTrack(event.track);
+      }
+      
+      console.log('Remote stream now has tracks:', remoteMediaStream.getTracks().map(t => t.kind));
+      
+      // 새로운 MediaStream 객체를 만들어서 React 상태 업데이트 트리거
+      const newStream = new MediaStream(remoteMediaStream.getTracks());
+      setRemoteStream(newStream);
     };
 
     // DeepAR 스트림이 있으면 우선 사용, 없으면 localStream 사용

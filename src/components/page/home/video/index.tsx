@@ -5,7 +5,7 @@ import DeepARCamera from "./deepar-camera";
 import Default from "./defualt";
 import styles from "./styles.module.scss";
 
-export type VideoMode = "loading" | "only-voice" | "camera" | "deepar" | "default";
+export type VideoMode = "loading" | "only-voice" | "camera" | "deepar" | "default" | "idle";
 
 interface VideoProps {
   mode?: VideoMode;
@@ -28,6 +28,7 @@ export default function Video({
 }: VideoProps) {
   return (
     <div className={styles.container}>
+      {mode === "idle" && <Loading isIdle />}
       {mode === "loading" && <Loading />}
       {mode === "only-voice" && (
         <OnlyVoice
