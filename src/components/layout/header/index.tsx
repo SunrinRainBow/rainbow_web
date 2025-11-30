@@ -4,7 +4,7 @@ import Button from "@/components/ui/button";
 import Auth from "@/components/ui/widget/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import s from "./styles.module.scss";
-import { Clock, User, LogOut } from "lucide-react";
+import { User, LogOut } from "lucide-react";
 
 export default function Header() {
   const location = useLocation();
@@ -75,11 +75,6 @@ export default function Header() {
           </div>
         </div>
         <div className={s.items}>
-          <div className={s.item}>
-            <Button leadingIcon={<Clock />} size="medium" variant="secondary">
-              지난 대화 상대
-            </Button>
-          </div>
           {isAuthenticated ? (
             <Button
               leadingIcon={<LogOut />}
