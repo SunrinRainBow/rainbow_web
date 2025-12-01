@@ -18,12 +18,15 @@ export default function Profile() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       if (!isAuthenticated) return;
-      
+
       setIsLoading(true);
       try {
         const profile = await getMyProfile();
@@ -57,7 +60,7 @@ export default function Profile() {
   const handleSave = async () => {
     setIsSaving(true);
     setMessage(null);
-    
+
     try {
       await updateMyProfile({
         nickname,
@@ -66,10 +69,10 @@ export default function Profile() {
         gender: gender || undefined,
         categories: selectedCategories,
       });
-      setMessage({ type: 'success', text: '프로필이 저장되었습니다.' });
+      setMessage({ type: "success", text: "프로필이 저장되었습니다." });
     } catch (error) {
       console.error("Failed to save profile:", error);
-      setMessage({ type: 'error', text: '프로필 저장에 실패했습니다.' });
+      setMessage({ type: "error", text: "프로필 저장에 실패했습니다." });
     } finally {
       setIsSaving(false);
     }
@@ -140,44 +143,6 @@ export default function Profile() {
             )}
 
             <div className={styles.form}>
-              
-              <div className={styles.section}>
-                <h2 className={styles.section_title}>프로필 사진</h2>
-                <div className={styles.avatar_section}>
-                  <div className={styles.avatar_placeholder}>
-                    {user?.avatar ? (
-                      <img src={user.avatar} alt={user.name || "User"} />
-                    ) : (
-                      <svg
-                        width="64"
-                        height="64"
-                        viewBox="0 0 64 64"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <circle
-                          cx="32"
-                          cy="32"
-                          r="32"
-                          fill="rgba(255,255,255,0.1)"
-                        />
-                        <path
-                          d="M32 20C27.5817 20 24 23.5817 24 28C24 32.4183 27.5817 36 32 36C36.4183 36 40 32.4183 40 28C40 23.5817 36.4183 20 32 20Z"
-                          fill="rgba(255,255,255,0.5)"
-                        />
-                        <path
-                          d="M32 38C25.3726 38 20 41.3726 20 48H44C44 41.3726 38.6274 38 32 38Z"
-                          fill="rgba(255,255,255,0.5)"
-                        />
-                      </svg>
-                    )}
-                  </div>
-                  <Button variant="secondary" size="medium">
-                    사진 변경
-                  </Button>
-                </div>
-              </div>
-
               <div className={styles.section}>
                 <h2 className={styles.section_title}>기본 정보</h2>
                 <div className={styles.form_grid}>
@@ -279,7 +244,7 @@ export default function Profile() {
                   fullWidth
                   disabled={isSaving || isLoading}
                 >
-                  {isSaving ? '저장 중...' : '프로필 저장'}
+                  {isSaving ? "저장 중..." : "프로필 저장"}
                 </Button>
               </div>
             </div>
