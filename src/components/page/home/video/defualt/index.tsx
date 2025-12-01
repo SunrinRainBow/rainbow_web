@@ -1,11 +1,14 @@
 import { useRef, useEffect } from "react";
+import { VideoOff } from "lucide-react";
 import styles from "./styles.module.scss";
 
 interface DefaultProps {
   remoteStream?: MediaStream | null;
+  isRemoteVideoEnabled?: boolean;
+  matchedUserName?: string;
 }
 
-export default function Default({ remoteStream }: DefaultProps) {
+export default function Default({ remoteStream, isRemoteVideoEnabled = true, matchedUserName }: DefaultProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -34,26 +37,40 @@ export default function Default({ remoteStream }: DefaultProps) {
     }
   }, [remoteStream]);
 
-  const mockData = {
-    avatar: "/Avatar.svg",
-    name: "상대방",
-  };
+  const displayName = matchedUserName || "상대방";
 
   return (
     <div className={styles.container}>
       {remoteStream ? (
-        <video ref={videoRef} className={styles.video} autoPlay playsInline />
+        <>
+          <video 
+            ref={videoRef} 
+            className={`${styles.video} ${!isRemoteVideoEnabled ? styles.video_hidden : ''}`} 
+            autoPlay 
+            playsInline 
+          />
+          {!isRemoteVideoEnabled && (
+            <div className={styles.video_off_overlay}>
+              <div className={styles.video_off_content}>
+                <div className={styles.video_off_icon}>
+                  <VideoOff size={48} />
+                </div>
+                <p className={styles.video_off_text}>{displayName}님이 카메라를 껐습니다</p>
+              </div>
+            </div>
+          )}
+        </>
       ) : (
         <div className={styles.placeholder}>
           <div className={styles.placeholder_content}>
             <div className={styles.avatar_wrapper}>
               <img
-                src={mockData.avatar}
-                alt={mockData.name}
+                src="/Avatar.svg"
+                alt={displayName}
                 className={styles.avatar}
               />
             </div>
-            <h3 className={styles.name}>{mockData.name}</h3>
+            <h3 className={styles.name}>{displayName}</h3>
             <div className={styles.connecting_animation}>
               <span></span>
               <span></span>

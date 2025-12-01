@@ -15,6 +15,8 @@ interface VideoProps {
   onVideoToggle?: () => void;
   isVideoOn?: boolean;
   onStreamReady?: (stream: MediaStream) => void;
+  isRemoteVideoEnabled?: boolean;
+  matchedUserName?: string;
 }
 
 export default function Video({
@@ -25,6 +27,8 @@ export default function Video({
   onVideoToggle,
   isVideoOn = true,
   onStreamReady,
+  isRemoteVideoEnabled = true,
+  matchedUserName,
 }: VideoProps) {
   return (
     <div className={styles.container}>
@@ -53,7 +57,13 @@ export default function Video({
           onStreamReady={onStreamReady}
         />
       )}
-      {mode === "default" && <Default remoteStream={remoteStream} />}
+      {mode === "default" && (
+        <Default 
+          remoteStream={remoteStream} 
+          isRemoteVideoEnabled={isRemoteVideoEnabled}
+          matchedUserName={matchedUserName}
+        />
+      )}
     </div>
   );
 }
