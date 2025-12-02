@@ -23,6 +23,7 @@ export default function Home() {
     endCall,
     toggleVideo,
     isVideoEnabled,
+    isRemoteVideoEnabled,
     clearError,
     setDeepARStream,
   } = useRoom();
@@ -159,7 +160,9 @@ export default function Home() {
                         ? "loading"
                         : "idle"
                   } 
-                  remoteStream={remoteStream} 
+                  remoteStream={remoteStream}
+                  isRemoteVideoEnabled={isRemoteVideoEnabled}
+                  matchedUserName={matchedUser?.nickname || matchedUser?.name}
                 />
                 <div className={styles.video_label}>
                   {matchedUser?.nickname || matchedUser?.name || '상대방'}

@@ -42,6 +42,8 @@ interface UseRoomReturn {
   toggleAudio: () => void;
   isVideoEnabled: boolean;
   isAudioEnabled: boolean;
+  isRemoteVideoEnabled: boolean;
+  isRemoteAudioEnabled: boolean;
   clearError: () => void;
   setDeepARStream: (stream: MediaStream) => void;
 }
@@ -59,6 +61,8 @@ export function useRoom(): UseRoomReturn {
   const [error, setError] = useState<string | null>(null);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isRemoteVideoEnabled, setIsRemoteVideoEnabled] = useState(true);
+  const [isRemoteAudioEnabled, setIsRemoteAudioEnabled] = useState(true);
 
   const wsRef = useRef<WebSocket | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
@@ -339,6 +343,16 @@ export function useRoom(): UseRoomReturn {
           setIsConnected(false);
           break;
 
+        case 'media-state':
+          console.log('Peer media state changed:', data);
+          if (data.video !== undefined) {
+            setIsRemoteVideoEnabled(data.video);
+          }
+          if (data.audio !== undefined) {
+            setIsRemoteAudioEnabled(data.audio);
+          }
+          break;
+
         case 'call-ended':
           console.log('Call ended by peer');
           cleanupCall();
@@ -346,6 +360,8 @@ export function useRoom(): UseRoomReturn {
           setSessionId(null);
           setMatchedUser(null);
           setRole(null);
+          setIsRemoteVideoEnabled(true);
+          setIsRemoteAudioEnabled(true);
           break;
 
         default:
@@ -437,6 +453,15 @@ export function useRoom(): UseRoomReturn {
       if (videoTrack) {
         videoTrack.enabled = !videoTrack.enabled;
         setIsVideoEnabled(videoTrack.enabled);
+        
+        // WebSocket으로 상대방에게 비디오 상태 변경 알림
+        const ws = wsRef.current;
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type: 'media-state',
+            video: videoTrack.enabled,
+          }));
+        }
       }
     }
   }, []);
@@ -447,6 +472,15 @@ export function useRoom(): UseRoomReturn {
       if (audioTrack) {
         audioTrack.enabled = !audioTrack.enabled;
         setIsAudioEnabled(audioTrack.enabled);
+        
+        // WebSocket으로 상대방에게 오디오 상태 변경 알림
+        const ws = wsRef.current;
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type: 'media-state',
+            audio: audioTrack.enabled,
+          }));
+        }
       }
     }
   }, []);
@@ -504,6 +538,8 @@ export function useRoom(): UseRoomReturn {
     toggleAudio,
     isVideoEnabled,
     isAudioEnabled,
+    isRemoteVideoEnabled,
+    isRemoteAudioEnabled,
     clearError,
     setDeepARStream,
   };
