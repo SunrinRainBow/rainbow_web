@@ -6,14 +6,12 @@ import styles from "../camera/styles.module.scss";
 
 interface DeepARCameraProps {
   showControls?: boolean;
-  onVideoToggle?: () => void;
   isVideoOn?: boolean;
   onStreamReady?: (stream: MediaStream) => void;
 }
 
 export default function DeepARCamera({
   showControls = false,
-  onVideoToggle,
   onStreamReady,
 }: DeepARCameraProps) {
   const previewRef = useRef<HTMLDivElement>(null);

@@ -37,14 +37,12 @@ export default function Video({
       {mode === "only-voice" && (
         <OnlyVoice
           showControls={showControls}
-          onVideoToggle={onVideoToggle}
           isVideoOn={isVideoOn}
         />
       )}
       {mode === "camera" && (
         <Camera
           showControls={showControls}
-          onVideoToggle={onVideoToggle}
           isVideoOn={isVideoOn}
           localStream={localStream}
         />
@@ -52,7 +50,6 @@ export default function Video({
       {mode === "deepar" && (
         <DeepARCamera
           showControls={showControls}
-          onVideoToggle={onVideoToggle}
           isVideoOn={isVideoOn}
           onStreamReady={onStreamReady}
         />

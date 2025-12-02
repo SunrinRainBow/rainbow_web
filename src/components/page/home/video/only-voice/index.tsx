@@ -4,13 +4,11 @@ import styles from "./styles.module.scss";
 
 interface OnlyVoiceProps {
   showControls?: boolean;
-  onVideoToggle?: () => void;
   isVideoOn?: boolean;
 }
 
 export default function OnlyVoice({
   showControls = false,
-  onVideoToggle,
 }: OnlyVoiceProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
