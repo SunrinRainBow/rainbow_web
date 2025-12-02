@@ -9,19 +9,18 @@ import styles from "./styles.module.scss";
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
-  const { 
+  const {
     status,
-    matchedUser, 
+    matchedUser,
     role,
     localStream,
     remoteStream,
     isConnected,
     isWsConnected,
     error,
-    join, 
-    leave, 
+    join,
+    leave,
     endCall,
-    toggleVideo,
     isVideoEnabled,
     isRemoteVideoEnabled,
     clearError,
@@ -30,17 +29,12 @@ export default function Home() {
 
   const [isVideoOn, setIsVideoOn] = useState(true);
 
-  const handleVideoToggle = () => {
-    toggleVideo();
-    setIsVideoOn((prev) => !prev);
-  };
-
   const handleStartMatching = async () => {
     clearError();
     try {
       await join();
     } catch (err) {
-      console.error('Failed to start matching:', err);
+      console.error("Failed to start matching:", err);
     }
   };
 
@@ -48,7 +42,7 @@ export default function Home() {
     try {
       await leave();
     } catch (err) {
-      console.error('Failed to stop matching:', err);
+      console.error("Failed to stop matching:", err);
     }
   };
 
@@ -62,14 +56,14 @@ export default function Home() {
 
   const getStatusText = () => {
     switch (status) {
-      case 'waiting':
-        return '매칭 중... 취소하려면 탭하세요';
-      case 'matched':
-        return isConnected ? '연결됨' : '연결 중...';
-      case 'connected':
-        return '통화 중';
+      case "waiting":
+        return "매칭 중... 취소하려면 탭하세요";
+      case "matched":
+        return isConnected ? "연결됨" : "연결 중...";
+      case "connected":
+        return "통화 중";
       default:
-        return '';
+        return "";
     }
   };
 
@@ -78,11 +72,12 @@ export default function Home() {
       <Header />
       <MainLayout>
         <div className={styles.container}>
-          
           {error && (
             <div className={styles.error_message}>
               <span>{error}</span>
-              <button className={styles.error_close} onClick={clearError}>×</button>
+              <button className={styles.error_close} onClick={clearError}>
+                ×
+              </button>
             </div>
           )}
 
@@ -96,8 +91,11 @@ export default function Home() {
                 <div className={styles.waiting_spinner}></div>
                 <span>서버 연결 중...</span>
               </div>
-            ) : status === 'idle' ? (
-              <button className={styles.start_button} onClick={handleStartMatching}>
+            ) : status === "idle" ? (
+              <button
+                className={styles.start_button}
+                onClick={handleStartMatching}
+              >
                 <VideoIcon size={20} />
                 <div className={styles.avatar_stack}>
                   <img src="https://i.pravatar.cc/40?img=1" alt="" />
@@ -108,22 +106,26 @@ export default function Home() {
                 </div>
                 <span>비디오챗 시작하기</span>
               </button>
-            ) : status === 'waiting' ? (
-              <button className={styles.waiting_button} onClick={handleStopMatching}>
+            ) : status === "waiting" ? (
+              <button
+                className={styles.waiting_button}
+                onClick={handleStopMatching}
+              >
                 <div className={styles.waiting_spinner}></div>
                 <span>{getStatusText()}</span>
               </button>
-            ) : (status === 'matched' || status === 'connected') ? (
+            ) : status === "matched" || status === "connected" ? (
               <div className={styles.matched_controls}>
                 <div className={styles.matched_info}>
                   {matchedUser && (
                     <span className={styles.matched_name}>
-                      {matchedUser.nickname || matchedUser.name || '상대방'}과 {isConnected ? '통화 중' : '연결 중...'}
+                      {matchedUser.nickname || matchedUser.name || "상대방"}과{" "}
+                      {isConnected ? "통화 중" : "연결 중..."}
                     </span>
                   )}
                   {role && (
                     <span className={styles.role_badge}>
-                      {role === 'initiator' ? '호스트' : '게스트'}
+                      {role === "initiator" ? "호스트" : "게스트"}
                     </span>
                   )}
                 </div>
@@ -135,13 +137,11 @@ export default function Home() {
           </div>
 
           <div className={styles.video_grid}>
-            
             <div className={styles.local_section}>
               <div className={styles.video_wrapper}>
                 <Video
                   mode={isVideoOn ? "deepar" : "only-voice"}
                   showControls={true}
-                  onVideoToggle={handleVideoToggle}
                   isVideoOn={isVideoOn}
                   localStream={localStream}
                   onStreamReady={setDeepARStream}
@@ -152,29 +152,28 @@ export default function Home() {
 
             <div className={styles.remote_section}>
               <div className={styles.video_wrapper}>
-                <Video 
+                <Video
                   mode={
-                    (status === 'matched' || status === 'connected') && remoteStream 
-                      ? "default" 
-                      : status === 'waiting' 
-                        ? "loading"
-                        : "idle"
-                  } 
+                    (status === "matched" || status === "connected") &&
+                    remoteStream
+                      ? "default"
+                      : status === "waiting"
+                      ? "loading"
+                      : "idle"
+                  }
                   remoteStream={remoteStream}
                   isRemoteVideoEnabled={isRemoteVideoEnabled}
                   matchedUserName={matchedUser?.nickname || matchedUser?.name}
                 />
                 <div className={styles.video_label}>
-                  {matchedUser?.nickname || matchedUser?.name || '상대방'}
+                  {matchedUser?.nickname || matchedUser?.name || "상대방"}
                 </div>
               </div>
             </div>
           </div>
 
-          {(status === 'matched' || status === 'connected') && !isConnected && (
-            <div className={styles.connection_status}>
-              WebRTC 연결 중...
-            </div>
+          {(status === "matched" || status === "connected") && !isConnected && (
+            <div className={styles.connection_status}>WebRTC 연결 중...</div>
           )}
         </div>
       </MainLayout>

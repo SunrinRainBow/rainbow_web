@@ -5,14 +5,19 @@ import DeepARCamera from "./deepar-camera";
 import Default from "./defualt";
 import styles from "./styles.module.scss";
 
-export type VideoMode = "loading" | "only-voice" | "camera" | "deepar" | "default" | "idle";
+export type VideoMode =
+  | "loading"
+  | "only-voice"
+  | "camera"
+  | "deepar"
+  | "default"
+  | "idle";
 
 interface VideoProps {
   mode?: VideoMode;
   remoteStream?: MediaStream | null;
   localStream?: MediaStream | null;
   showControls?: boolean;
-  onVideoToggle?: () => void;
   isVideoOn?: boolean;
   onStreamReady?: (stream: MediaStream) => void;
   isRemoteVideoEnabled?: boolean;
@@ -24,7 +29,6 @@ export default function Video({
   remoteStream = null,
   localStream = null,
   showControls = false,
-  onVideoToggle,
   isVideoOn = true,
   onStreamReady,
   isRemoteVideoEnabled = true,
@@ -35,10 +39,7 @@ export default function Video({
       {mode === "idle" && <Loading isIdle />}
       {mode === "loading" && <Loading />}
       {mode === "only-voice" && (
-        <OnlyVoice
-          showControls={showControls}
-          isVideoOn={isVideoOn}
-        />
+        <OnlyVoice showControls={showControls} isVideoOn={isVideoOn} />
       )}
       {mode === "camera" && (
         <Camera
@@ -55,8 +56,8 @@ export default function Video({
         />
       )}
       {mode === "default" && (
-        <Default 
-          remoteStream={remoteStream} 
+        <Default
+          remoteStream={remoteStream}
           isRemoteVideoEnabled={isRemoteVideoEnabled}
           matchedUserName={matchedUserName}
         />
