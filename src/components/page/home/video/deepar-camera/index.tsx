@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { Video, Smile } from "lucide-react";
+import { Smile } from "lucide-react";
 import { useDeepAR, DEEPAR_EFFECTS } from "@/hooks/useDeepAR";
 import FilterModal from "../filter-modal";
 import styles from "../camera/styles.module.scss";
@@ -52,10 +52,6 @@ export default function DeepARCamera({
       checkStream();
     }
   }, [isInitialized, onStreamReady, getOutputStream]);
-
-  const handleVideoToggle = () => {
-    onVideoToggle?.();
-  };
 
   const handleFilterSelect = async (effectPath: string | null) => {
     if (effectPath) {
@@ -110,13 +106,6 @@ export default function DeepARCamera({
             aria-label="필터"
           >
             <Smile size={20} />
-          </button>
-          <button
-            className={styles.control_button}
-            onClick={handleVideoToggle}
-            aria-label="카메라 끄기"
-          >
-            <Video size={20} />
           </button>
         </div>
       )}

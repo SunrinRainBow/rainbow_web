@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { Video, Smile } from "lucide-react";
+import { Smile } from "lucide-react";
 import FilterModal from "../filter-modal";
 import styles from "./styles.module.scss";
 
@@ -21,7 +21,6 @@ export default function Camera({
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   useEffect(() => {
-
     if (localStream) {
       setStream(localStream);
       if (videoRef.current) {
@@ -48,7 +47,6 @@ export default function Camera({
     if (isVideoOn) {
       getCameraStream();
     } else {
-
       if (stream && !localStream) {
         stream.getVideoTracks().forEach((track) => track.stop());
         setStream(null);
@@ -64,10 +62,6 @@ export default function Camera({
       }
     };
   }, [isVideoOn, localStream]);
-
-  const handleVideoToggle = () => {
-    onVideoToggle?.();
-  };
 
   return (
     <div className={styles.container}>
@@ -99,13 +93,6 @@ export default function Camera({
           >
             <Smile size={20} />
           </button>
-          <button
-            className={styles.control_button}
-            onClick={handleVideoToggle}
-            aria-label="카메라 끄기"
-          >
-            <Video size={20} />
-          </button>
         </div>
       )}
 
@@ -113,7 +100,7 @@ export default function Camera({
         isOpen={isFilterModalOpen}
         onClose={() => setIsFilterModalOpen(false)}
         onFilterSelect={(effect) => {
-          console.log('선택된 필터:', effect);
+          console.log("선택된 필터:", effect);
         }}
       />
     </div>

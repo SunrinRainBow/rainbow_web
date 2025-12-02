@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { Smile, VideoOff } from "lucide-react";
+import { Smile } from "lucide-react";
 import styles from "./styles.module.scss";
 
 interface OnlyVoiceProps {
@@ -96,13 +96,6 @@ export default function OnlyVoice({
             aria-label="필터"
           >
             <Smile size={20} />
-          </button>
-          <button
-            className={styles.control_button}
-            onClick={onVideoToggle}
-            aria-label="카메라 켜기"
-          >
-            <VideoOff size={20} />
           </button>
         </div>
       )}
