@@ -5,14 +5,12 @@ import styles from "./styles.module.scss";
 
 interface CameraProps {
   showControls?: boolean;
-  onVideoToggle?: () => void;
   isVideoOn?: boolean;
   localStream?: MediaStream | null;
 }
 
 export default function Camera({
   showControls = false,
-  onVideoToggle,
   isVideoOn = true,
   localStream,
 }: CameraProps) {
